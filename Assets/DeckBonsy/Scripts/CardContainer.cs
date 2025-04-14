@@ -10,6 +10,17 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private int handIndex;
     [SerializeField] private TextMeshProUGUI handPower;
     [SerializeField] private TextMeshProUGUI handName;
+    [SerializeField] private bool inPlay;
+
+    public bool GetInPlay()
+    {
+        return inPlay;
+    }
+
+    public void SetInPlay(bool _inPlay)
+    {
+        inPlay = _inPlay;
+    }
 
     public Card GetCardInfo()
     {
@@ -33,7 +44,8 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void WhenClicked()
     {
-        GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
+        if(!inPlay)
+            GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
     }
 
     public void UpdateCard()

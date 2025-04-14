@@ -10,6 +10,7 @@ public class Card
     public int points { get; private set; }
     public CardType cardType { get; private set; }
 
+
     public void SetValues(int _id, string _cardName, string _cardDescription, int _effectId, int _points, CardType _cardType)
     {
         id = _id;

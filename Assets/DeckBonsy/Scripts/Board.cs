@@ -76,11 +76,12 @@ public class Board : MonoBehaviour
                     Quaternion.identity, boardSpots[columnIndex, i]);
 
                 CardContainer addedCardContainer = placedCardsObjects[columnIndex,i].GetComponent<CardContainer>();
+                addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
                 addedCardContainer.UpdateCard();
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
                 EffectManager.effectManager.TriggerCardEffect(addedCardContainer.GetCardInfo().effectId);
-                GameManager.gameManager.RemoveCardsWithEqualPoints(columnIndex, addedCardContainer.GetCardInfo().effectId);
+                GameManager.gameManager.RemoveCardsWithEqualPoints(columnIndex, addedCardContainer.GetCardInfo().points);
                 return;
             }
         }
@@ -143,6 +144,7 @@ public class Board : MonoBehaviour
             DeckManager.deckManager.AddCardToDeck(placedCards[columnIndex, rowIndex]);
             occupiedBoardSpots[columnIndex, rowIndex] = false;
             placedCards[columnIndex, rowIndex] = null;
+            placedCardsObjects[columnIndex, rowIndex].GetComponent<CardContainer>().SetInPlay(false);
             Destroy(placedCardsObjects[columnIndex, rowIndex]);
         }
         else
