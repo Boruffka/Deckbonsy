@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
 
     public int CountTypeOfCardInColumn(CardType type, bool isPlayerBoard, int columnIndex)
     {
-        if(isPlayerBoard)
+        if (isPlayerBoard)
         {
             return playerBoard.CountTypeInColumn(type, columnIndex);
         }
@@ -175,10 +175,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
     public void EndTurn()
     {
+        Debug.Log("End turn!");
         if (isPlayerTurn)
         {
             //Debug.Log("Player 1's turn has ended.");

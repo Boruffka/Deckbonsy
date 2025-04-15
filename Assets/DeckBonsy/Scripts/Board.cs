@@ -91,8 +91,8 @@ public class Board : MonoBehaviour
                 addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
                 addedCardContainer.SetColumnIndex(columnIndex);
-                UpdateBoard();
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
+                UpdateBoard();
                 return;
             }
         }
@@ -129,25 +129,32 @@ public class Board : MonoBehaviour
 
     public void DropFloatingCards(int columnIndex)
     {
-        for (int i = size-1; i > 0; i--)
+        int checkedIndex = 2;
+        if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, 2 - checkedIndex] == false
+            && occupiedBoardSpots[columnIndex, 2 - checkedIndex] == false)
         {
-            if (occupiedBoardSpots[columnIndex, i] == true && occupiedBoardSpots[columnIndex, i - 1] == false
-                && occupiedBoardSpots[columnIndex, i - 2] == false)
-            {
-                occupiedBoardSpots[columnIndex, i - 2] = true;
-                occupiedBoardSpots[columnIndex, i] = false;
-                placedCardsObjects[columnIndex, i].transform.position = boardSpots[columnIndex, i - 2].position;
-                placedCards[columnIndex, i - 2] = placedCards[columnIndex, i];
-                placedCards[columnIndex, i] = null;
-            }
-            else if (occupiedBoardSpots[columnIndex, i] == true && occupiedBoardSpots[columnIndex, i - 1] == false)
-            {
-                occupiedBoardSpots[columnIndex, i - 1] = true;
-                occupiedBoardSpots[columnIndex, i] = false;
-                placedCardsObjects[columnIndex, i].transform.position = boardSpots[columnIndex, i - 1].position;
-                placedCards[columnIndex, i - 1] = placedCards[columnIndex, i];
-                placedCards[columnIndex, i] = null;
-            }
+            occupiedBoardSpots[columnIndex, checkedIndex - 2] = true;
+            occupiedBoardSpots[columnIndex, checkedIndex] = false;
+            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 2].position;
+            placedCards[columnIndex, checkedIndex - 2] = placedCards[columnIndex, checkedIndex];
+            placedCards[columnIndex, checkedIndex] = null;
+        }
+        else if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, checkedIndex - 1] == false)
+        {
+            occupiedBoardSpots[columnIndex, checkedIndex - 1] = true;
+            occupiedBoardSpots[columnIndex, checkedIndex] = false;
+            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 1].position;
+            placedCards[columnIndex, checkedIndex - 1] = placedCards[columnIndex, checkedIndex];
+            placedCards[columnIndex, checkedIndex] = null;
+        }
+        checkedIndex = 1;
+        if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, checkedIndex - 1] == false)
+        {
+            occupiedBoardSpots[columnIndex, checkedIndex - 1] = true;
+            occupiedBoardSpots[columnIndex, checkedIndex] = false;
+            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 1].position;
+            placedCards[columnIndex, checkedIndex - 1] = placedCards[columnIndex, checkedIndex];
+            placedCards[columnIndex, checkedIndex] = null;
         }
     }
 
@@ -176,6 +183,7 @@ public class Board : MonoBehaviour
             }
         }
         DropFloatingCards(columnIndex);
+        UpdateBoard();
     }
 
     private void RemoveCardFromColumn(int columnIndex, int rowIndex)
