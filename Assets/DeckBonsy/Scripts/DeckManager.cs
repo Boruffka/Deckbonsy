@@ -43,18 +43,18 @@ public class DeckManager : MonoBehaviour
         (int, string, string, int, int, CardType)[] cardValues = new (int, string, string, int, int, CardType)[]
         {
         (0, "Slave","Bazowa jednostka", 0, 1, CardType.Slave),
-        (1, "Emperor","Nie może zostać ukradziony, jednak w dalszym ciągu może być zbity", 0, 6, CardType.Emperor),
-        (2, "Kaeso","-1 punkt do karty od każdej karty Politycznej na planszy, +1 do każdej karty Slave na planszy", 0, 5, CardType.Politician),
-        (3, "Octavian","Dodaje kartę Citizena na rękę. Boostują go karty Citizenów w tej samej kolumnie", 0, 4, CardType.Politician),
-        (4, "Domina Livia Versus","Boostują ją soldierzy w tej samej kolumnie ", 0, 3, CardType.Politician),
-        (5, "Maximus Aulus","", 0, 4, CardType.Politician),
-        (6, "Magnus","Wybiera kartę przeciwnika z planszy z zakresu punktacji i cofa ją na jego rękę, lub do talii, gdy nie ma miejsca ", 0, 4, CardType.Politician),
+        (1, "Emperor","Nie może zostać ukradziony, jednak w dalszym ciągu może być zbity", 1, 6, CardType.Emperor),
+        (2, "Kaeso","-1 punkt do karty od każdej karty Politycznej na planszy, +1 do każdej karty Slave na planszy", 2, 5, CardType.Politician),
+        (3, "Octavian","Dodaje kartę Citizena na rękę. Boostują go karty Citizenów w tej samej kolumnie", 3, 4, CardType.Politician),
+        (4, "Domina Livia Versus","Boostują ją soldierzy w tej samej kolumnie ", 6, 3, CardType.Politician),
+        (5, "Maximus Aulus","", 4, 4, CardType.Politician),
+        (6, "Magnus","Wybiera kartę przeciwnika z planszy z zakresu punktacji i cofa ją na jego rękę, lub do talii, gdy nie ma miejsca ", 5, 4, CardType.Politician),
         (7, "Soldier","Bazowa jednostka", 0, 1, CardType.Soldier),
         (8, "Elite Soldier","Bazowa jednostka, ulepszony Soldier", 0, 2, CardType.Soldier),
         (9, "Citizen","Bazowa jednostka", 0, 1, CardType.Citizen),
-        (10, "Najwyższy Kapłan","Daje immunity wybranej karcie w rzędzie (domyślnie karta poniżej, jednak jeśli karta Najwyższego Kapłana jest kartą na spodzie rzędu, wtedy immunity przechodzi na kartę powyżej", 0, 36, CardType.Politician),
-        (11, "Infiltrator","Gracz może podejrzeć pierwszą kartę z wierzchu stosu kart przeciwnika",0, 2,CardType.Citizen),
-        (12, "Złodziej", " Gracz zamienia dowolną kartę przeciwnika ze swoją kartą Złodzieja i bierze ją na rękę",0,0,CardType.Citizen)
+        (10, "Najwyższy Kapłan","Daje immunity wybranej karcie w rzędzie (domyślnie karta poniżej, jednak jeśli karta Najwyższego Kapłana jest kartą na spodzie rzędu, wtedy immunity przechodzi na kartę powyżej", 4, 4, CardType.Politician),
+        (11, "Infiltrator","Gracz może podejrzeć pierwszą kartę z wierzchu stosu kart przeciwnika",7, 2,CardType.Citizen),
+        (12, "Złodziej", " Gracz zamienia dowolną kartę przeciwnika ze swoją kartą Złodzieja i bierze ją na rękę",8,0,CardType.Citizen)
         
         };
 

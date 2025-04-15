@@ -80,12 +80,25 @@ public class Board : MonoBehaviour
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
                 addedCardContainer.UpdateCard();
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
-                EffectManager.effectManager.TriggerCardEffect(addedCardContainer.GetCardInfo().effectId);
-                GameManager.gameManager.RemoveCardsWithEqualPoints(columnIndex, addedCardContainer.GetCardInfo().points);
                 return;
             }
         }
         Debug.Log("Column full!");
+    }
+
+    public bool IsBoardEmpty()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for(int j = 0; j < size; j++)
+            {
+                if (occupiedBoardSpots[i,j] == true)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public bool CheckForEmptyInColumn(int columnIndex)
@@ -101,7 +114,7 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    public void UpdateColumn(int columnIndex)
+    public void DropFloatingCards(int columnIndex)
     {
         for (int i = size-1; i > 0; i--)
         {
@@ -125,6 +138,18 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void UpdateBoard()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                placedCardsObjects[i, j].GetComponent<CardContainer>().UpdateCard();
+            }
+        }
+        Debug.Log("Column updated!");
+    }
+
     public void RemoveCardsFromColumn(int columnIndex, int pointValue)
     {
         for (int i = 0; i < size; i++)
@@ -134,7 +159,7 @@ public class Board : MonoBehaviour
                 RemoveCardFromColumn(columnIndex, i);
             }
         }
-        UpdateColumn(columnIndex);
+        DropFloatingCards(columnIndex);
     }
 
     private void RemoveCardFromColumn(int columnIndex, int rowIndex)

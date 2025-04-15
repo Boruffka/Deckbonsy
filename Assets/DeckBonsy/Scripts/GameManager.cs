@@ -9,13 +9,17 @@ public class GameManager : MonoBehaviour
     [Header("Main Variables")]
     [SerializeField] private bool isPlayerTurn;
     [SerializeField] private bool gameReady;
-    [SerializeField] public int selectedCardIndex;
+    [SerializeField] private bool isCardBeingPlayed;
+    [SerializeField] private CardContainer cardContainerBeingPlayed;
 
-    [Header("[TEMP] Input System")]
+    [Header("Input System")]
     [SerializeField] private bool chosenCard;
     [SerializeField] private int chosenCardIndex;
     [SerializeField] private bool chosenColumn;
     [SerializeField] private int chosenColumnIndex;
+    [SerializeField] private bool chosenCardContainerInPlay;
+    [SerializeField] private CardContainer chosenCardContainerInPlayObject;
+    [SerializeField] public int selectedCardIndex;
 
     [Header("Board References")]
     [SerializeField] private Board playerBoard;
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
         isPlayerTurn = true;
@@ -50,47 +55,88 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (chosenCard && chosenColumn) // PLAYING A CARD
+        if (!isCardBeingPlayed)
         {
-            if (isPlayerTurn)
+            if (chosenCard && chosenColumn) // PLAYING A CARD
             {
-                if (playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
+                isCardBeingPlayed = true;
+                cardContainerBeingPlayed = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex).GetComponent<CardContainer>();
+                if (isPlayerTurn)
                 {
-                    //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
-                    chosenCard = chosenColumn = false;
-                    playerBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
-                    HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
-                    //playerBoard.ListBoard();
-                    //HandManager.handManager.ListHand();
-                    UpdateScore();
-                    EndTurn();
+                    if (playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
+                    {
+                        //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
+                        chosenCard = chosenColumn = false;
+                        playerBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                        HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
+                        //playerBoard.ListBoard();
+                        //HandManager.handManager.ListHand();
+                        UpdateScore();
+                    }
+                    else
+                    {
+                        chosenCard = chosenColumn = false;
+                        Debug.Log("Column full! Pick again.");
+                    }
                 }
                 else
                 {
-                    chosenCard = chosenColumn = false;
-                    Debug.Log("Column full! Pick again.");
+                    if (enemyBoard.CheckForEmptyInColumn(chosenColumnIndex))
+                    {
+                        //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
+                        chosenCard = chosenColumn = false;
+                        enemyBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                        HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
+                        //enemyBoard.ListBoard();
+                        //.handManager.ListHand();
+                        UpdateScore();
+                    }
+                    else
+                    {
+                        chosenCard = chosenColumn = false;
+                        Debug.Log("Column full! Pick again.");
+                    }
+                }
+            }
+        }
+        if(isCardBeingPlayed)
+        {
+            Card playedCard = cardContainerBeingPlayed.GetCardInfo();
+            Board inactiveBoard = isPlayerTurn ? enemyBoard : playerBoard;
+
+            if(DoesEffectIdRequireInput(playedCard.effectId) && !inactiveBoard.IsBoardEmpty())
+            {
+                Debug.Log("Requires input!");
+                if(chosenCardContainerInPlay)
+                {
+                    chosenCardContainerInPlay = false;
+                    isCardBeingPlayed = false;
+                    RemoveCardsWithEqualPoints(chosenColumnIndex, playedCard.points);
+                    EffectManager.effectManager.TriggerCardEffect(playedCard.effectId, cardContainerBeingPlayed, chosenCardContainerInPlayObject);
+                    EndTurn();
                 }
             }
             else
             {
-                if (enemyBoard.CheckForEmptyInColumn(chosenColumnIndex))
-                {
-                    //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
-                    chosenCard = chosenColumn = false;
-                    enemyBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
-                    HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
-                    //enemyBoard.ListBoard();
-                    //.handManager.ListHand();
-                    UpdateScore();
-                    EndTurn();
-                }
-                else
-                {
-                    chosenCard = chosenColumn = false;
-                    Debug.Log("Column full! Pick again.");
-                }
+                Debug.Log("Does not require input!");
+                chosenCardContainerInPlay = false;
+                isCardBeingPlayed = false;
+                RemoveCardsWithEqualPoints(chosenColumnIndex, playedCard.points);
+                EffectManager.effectManager.TriggerCardEffect(playedCard.effectId, cardContainerBeingPlayed, null); 
+                EndTurn();
             }
         }
+    }
+
+    private bool DoesEffectIdRequireInput(int effectId)
+    {
+        if (effectId == 5)
+            return true;
+        if (effectId == 7)
+            return true;
+        if (effectId == 8)
+            return true;
+        return false;
     }
 
     public void RemoveCardsWithEqualPoints(int columnIndex, int cardPoints)
@@ -137,6 +183,12 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Not your turn!");
         }
+    }
+
+    public void SetChosenCardInPlayObject(CardContainer _chosenCardContainerInPlayObject)
+    {
+        chosenCardContainerInPlay = true;
+        chosenCardContainerInPlayObject = _chosenCardContainerInPlayObject;
     }
 
     public void SetChosenColumnIndex(int _chosenColumnIndex, bool _isPlayerBoard)

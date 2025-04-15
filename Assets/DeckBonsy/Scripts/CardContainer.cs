@@ -44,12 +44,16 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void WhenClicked()
     {
-        if(!inPlay)
+        if (!inPlay)
             GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
+        else
+            GameManager.gameManager.SetChosenCardInPlayObject(this);
     }
 
     public void UpdateCard()
     {
+        cardInfo.SetPoints(cardInfo.basePoints);
+        EffectManager.effectManager.TriggerCardEffect(cardInfo.effectId, this, null);
         handPower.text = "" + cardInfo.points;
         handName.text = "" + cardInfo.cardName;
     }
