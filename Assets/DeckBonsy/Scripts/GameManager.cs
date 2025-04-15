@@ -155,13 +155,27 @@ public class GameManager : MonoBehaviour
     {
         if(isPlayerBoard)
         {
-            return playerBoard.CountType(type);
+            return playerBoard.CountTypeOnBoard(type);
         }
         else
         {
-            return playerBoard.CountType(type);
+            return playerBoard.CountTypeOnBoard(type);
         }
     }
+
+    public int CountTypeOfCardInColumn(CardType type, bool isPlayerBoard, int columnIndex)
+    {
+        if(isPlayerBoard)
+        {
+            return playerBoard.CountTypeInColumn(type, columnIndex);
+        }
+        else
+        {
+            return playerBoard.CountTypeInColumn(type, columnIndex);
+        }
+    }
+
+
 
     public void EndTurn()
     {

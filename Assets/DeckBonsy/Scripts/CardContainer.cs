@@ -8,6 +8,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private Card cardInfo;
     [SerializeField] private bool isPlayerCard;
     [SerializeField] private int handIndex;
+    [SerializeField] private int columnIndex;
     [SerializeField] private TextMeshProUGUI handPower;
     [SerializeField] private TextMeshProUGUI handName;
     [SerializeField] private bool inPlay;
@@ -40,6 +41,16 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void SetHandIndex(int _handIndex)
     {
         handIndex = _handIndex;
+    }
+
+    public void SetColumnIndex(int _columnIndex)
+    {
+        columnIndex = _columnIndex;
+    }
+
+    public int GetColumnIndex()
+    {
+        return columnIndex;
     }
 
     public void WhenClicked()

@@ -46,7 +46,7 @@ public class Board : MonoBehaviour
         return score;
     }
 
-    public int CountType(CardType type)
+    public int CountTypeOnBoard(CardType type)
     {
         int count = 0;
 
@@ -58,6 +58,20 @@ public class Board : MonoBehaviour
                 {
                     count++;
                 }
+            }
+        }
+        return count;
+    }
+    
+    public int CountTypeInColumn(CardType type, int columnIndex)
+    {
+        int count = 0;
+
+        for (int i = 0; i < size; i++)
+        {
+            if (placedCards[columnIndex, i]!=null && placedCards[columnIndex, i].cardType == type)
+            {
+                count++;
             }
         }
         return count;
@@ -76,6 +90,7 @@ public class Board : MonoBehaviour
                 CardContainer addedCardContainer = placedCardsObjects[columnIndex,i].GetComponent<CardContainer>();
                 addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
+                addedCardContainer.SetColumnIndex(columnIndex);
                 UpdateBoard();
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
                 return;

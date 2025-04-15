@@ -33,7 +33,7 @@ public class EffectManager : MonoBehaviour
         effects[3] = (playedCard, chosenCard) => Debug.Log("3"); 
         effects[4] = (playedCard, chosenCard) => Debug.Log("4");
         effects[5] = (playedCard, chosenCard) => Debug.Log("5");
-        effects[6] = (playedCard, chosenCard) => Debug.Log("6");
+        effects[6] = (playedCard, chosenCard) => Effects.Domina(playedCard);
         effects[7] = (playedCard, chosenCard) => Debug.Log("7");
         effects[8] = (playedCard, chosenCard) => Debug.Log("8");
         effects[9] = (playedCard, chosenCard) => Debug.Log("9");
@@ -61,7 +61,6 @@ public class EffectManager : MonoBehaviour
 
         static public void Kaeso(CardContainer playedCard)
         {
-
             Card cardInfo = playedCard.GetCardInfo();
 
             Debug.Log("Kaeso effect trigger!");
@@ -71,6 +70,29 @@ public class EffectManager : MonoBehaviour
 
             cardInfo.IncreasePoints(1 + inc - dec); // despite it saying "Increase" it can decrease the value :*
             // 1+ is there because this fella counts himself :D
+        }
+
+        static public void Helion(CardContainer playedCard)
+        {
+            Card cardInfo = playedCard.GetCardInfo();
+
+            Debug.Log("Helion effect trigger!");
+
+            int inc = GameManager.gameManager.CountTypeOfCardInColumn(CardType.Citizen, GameManager.gameManager.isPlayerTurn, playedCard.GetColumnIndex());
+
+            cardInfo.IncreasePoints(inc);
+            // notice no more +1
+        }
+
+        static public void Domina(CardContainer playedCard)
+        {
+            Card cardInfo = playedCard.GetCardInfo();
+
+            Debug.Log("Domina effect trigger!");
+
+            int inc = GameManager.gameManager.CountTypeOfCardInColumn(CardType.Soldier, GameManager.gameManager.isPlayerTurn, playedCard.GetColumnIndex());
+
+            cardInfo.IncreasePoints(inc);
         }
 
         // more effects added here
