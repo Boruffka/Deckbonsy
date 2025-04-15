@@ -54,6 +54,11 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         cardInfo.SetPoints(cardInfo.basePoints);
         EffectManager.effectManager.TriggerCardEffect(cardInfo.effectId, this, null);
+        UpdateCardVisuals();
+    }
+
+    public void UpdateCardVisuals()
+    {
         handPower.text = "" + cardInfo.points;
         handName.text = "" + cardInfo.cardName;
     }

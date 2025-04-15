@@ -46,9 +46,7 @@ public class Board : MonoBehaviour
         return score;
     }
 
-     
-
-    private int CountType(CardType type)
+    public int CountType(CardType type)
     {
         int count = 0;
 
@@ -56,7 +54,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                if (placedCards[i, j].cardType == type)
+                if (placedCards[i,j]!=null && placedCards[i, j].cardType == type)
                 {
                     count++;
                 }
@@ -78,7 +76,7 @@ public class Board : MonoBehaviour
                 CardContainer addedCardContainer = placedCardsObjects[columnIndex,i].GetComponent<CardContainer>();
                 addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
-                addedCardContainer.UpdateCard();
+                UpdateBoard();
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
                 return;
             }
@@ -144,10 +142,13 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                placedCardsObjects[i, j].GetComponent<CardContainer>().UpdateCard();
+                if (occupiedBoardSpots[i, j] == true && placedCardsObjects[i, j] != null)
+                {
+                    placedCardsObjects[i, j].GetComponent<CardContainer>().UpdateCard();
+                }
             }
         }
-        Debug.Log("Column updated!");
+        Debug.Log("Board updated!");
     }
 
     public void RemoveCardsFromColumn(int columnIndex, int pointValue)
@@ -171,6 +172,7 @@ public class Board : MonoBehaviour
             placedCards[columnIndex, rowIndex] = null;
             placedCardsObjects[columnIndex, rowIndex].GetComponent<CardContainer>().SetInPlay(false);
             Destroy(placedCardsObjects[columnIndex, rowIndex]);
+            UpdateBoard();
         }
         else
         {

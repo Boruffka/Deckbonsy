@@ -28,9 +28,9 @@ public class EffectManager : MonoBehaviour
     private void Start()
     {
         effects[0] = (playedCard, chosenCard) => Effects.NoEffect(); // no effect; default
-        effects[1] = (playedCard, chosenCard) => Debug.Log("1");
-        effects[2] = (playedCard, chosenCard) => Debug.Log("2");
-        effects[3] = (playedCard, chosenCard) => Debug.Log("3");
+        effects[1] = (playedCard, chosenCard) => Effects.Emperor(); 
+        effects[2] = (playedCard, chosenCard) => Effects.Kaeso(playedCard); 
+        effects[3] = (playedCard, chosenCard) => Debug.Log("3"); 
         effects[4] = (playedCard, chosenCard) => Debug.Log("4");
         effects[5] = (playedCard, chosenCard) => Debug.Log("5");
         effects[6] = (playedCard, chosenCard) => Debug.Log("6");
@@ -54,9 +54,23 @@ public class EffectManager : MonoBehaviour
             Debug.Log("No effect!");
         }
 
-        static public void TheEmperor()
+        static public void Emperor()
         {
             // something something, can't be stolen
+        }
+
+        static public void Kaeso(CardContainer playedCard)
+        {
+
+            Card cardInfo = playedCard.GetCardInfo();
+
+            Debug.Log("Kaeso effect trigger!");
+
+            int dec = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Politician, GameManager.gameManager.isPlayerTurn);
+            int inc = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Slave, GameManager.gameManager.isPlayerTurn);
+
+            cardInfo.IncreasePoints(1 + inc - dec); // despite it saying "Increase" it can decrease the value :*
+            // 1+ is there because this fella counts himself :D
         }
 
         // more effects added here

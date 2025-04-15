@@ -47,7 +47,7 @@ public class Hand : MonoBehaviour
                 cardObjects[i].GetComponent<CardContainer>().SetIsPlayerCard(isPlayerHand);
                 cardObjects[i].GetComponent<Transform>().SetParent(positions[i].GetComponent<Transform>());
                 cardObjects[i].GetComponent<CardContainer>().SetHandIndex(i);
-                cardObjects[i].GetComponent<CardContainer>().UpdateCard();
+                cardObjects[i].GetComponent<CardContainer>().UpdateCardVisuals();
                 currentHandSize++;
                 return;
             }

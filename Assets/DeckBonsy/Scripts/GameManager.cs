@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager gameManager { get; private set; }
 
     [Header("Main Variables")]
-    [SerializeField] private bool isPlayerTurn;
+    [SerializeField] public bool isPlayerTurn { get; private set; }
     [SerializeField] private bool gameReady;
     [SerializeField] private bool isCardBeingPlayed;
     [SerializeField] private CardContainer cardContainerBeingPlayed;
@@ -148,6 +148,18 @@ public class GameManager : MonoBehaviour
         else
         {
             playerBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+        }
+    }
+
+    public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
+    {
+        if(isPlayerBoard)
+        {
+            return playerBoard.CountType(type);
+        }
+        else
+        {
+            return playerBoard.CountType(type);
         }
     }
 

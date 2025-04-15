@@ -50,4 +50,10 @@ public class Card
         points = _points;
     }
     
+    
+    public void IncreasePoints(int increase)
+    {
+        points += increase;
+    }
+    
 }
