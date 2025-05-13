@@ -10,9 +10,10 @@ public class Card
     public int basePoints { get; private set; }
     public int points { get; private set; }
     public CardType cardType { get; private set; }
+    public Sprite sprite { get; private set; }
 
 
-    public void SetValues(int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType)
+    public void SetValues(int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType,Sprite _sprite)
     {
         id = _id;
         cardName = _cardName;
@@ -21,9 +22,10 @@ public class Card
         basePoints = _basePoints;
         points = basePoints;
         cardType = _cardType;
+        sprite = _sprite;
     }
 
-    public void SetValues((int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType) _cardValue)
+    public void SetValues((int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType, Sprite _sprite) _cardValue)
     {
         id = _cardValue._id;
         cardName = _cardValue._cardName;
@@ -32,6 +34,7 @@ public class Card
         basePoints = _cardValue._basePoints;
         points = basePoints;
         cardType = _cardValue._cardType;
+        sprite = _cardValue._sprite;
     }
 
     public void CopyFrom(Card other)
@@ -43,17 +46,18 @@ public class Card
         basePoints = other.basePoints;
         points = basePoints;
         cardType = other.cardType;
+        sprite = other.sprite;
     }
 
     public void SetPoints(int _points)
     {
         points = _points;
     }
-    
-    
+
+
     public void IncreasePoints(int increase)
     {
         points += increase;
     }
-    
+
 }

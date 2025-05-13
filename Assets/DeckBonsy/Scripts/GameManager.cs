@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool gameReady;
     [SerializeField] private bool isCardBeingPlayed;
     [SerializeField] private CardContainer cardContainerBeingPlayed;
+    [SerializeField] private int scoreToWin;
+    [SerializeField] private int currentRound;
+    public int CurrentRound => currentRound;
 
     [Header("Input System")]
     [SerializeField] private bool chosenCard;
@@ -26,175 +29,331 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Board enemyBoard;
     [SerializeField] private TextMeshProUGUI playerScoreCounter;
     [SerializeField] private TextMeshProUGUI enemyScoreCounter;
-   
+
+    [Header("Background Sprites")]
+    [SerializeField] private UnityEngine.UI.Image backgroundImage;
+    [SerializeField] private Sprite playerBackground;
+    [SerializeField] private Sprite enemyBackground;
+
+    [Header("End Game UI")]
+    [SerializeField] private GameObject endGamePanel;
+    [SerializeField] private TextMeshProUGUI resultText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private UnityEngine.UI.Button restartButton;
+
+    [Header("Draw Texts")]
+    [SerializeField] private GameObject playerDrawText;
+    [SerializeField] private GameObject enemyDrawText;
+
+    [Header("Dialogues")]
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private GameObject dialoguePanel;
+
+    [Header("Journal")]
+    [SerializeField] private GameObject journalButton;
+    [SerializeField] private JournalUpdateManager journalUpdateManager;
+
+    private bool journalOpenedThisDialogue = false;
+    private bool introShownThisRound = false;
+    private bool startCardGameAfterIntro = false;
 
     private void Awake()
     {
-        /// Singleton mechanism
+        if (gameManager != null && gameManager != this)
         {
-            if (gameManager != null && gameManager != this)
+            Destroy(this);
+        }
+        else
+        {
+            gameManager = this;
+        }
+
+        if (journalUpdateManager == null)
+        {
+            journalUpdateManager = FindFirstObjectByType<JournalUpdateManager>();
+            if (journalUpdateManager == null)
             {
-                Destroy(this);
-            }
-            else
-            {
-                gameManager = this;
+                Debug.LogError("JournalUpdateManager nie znaleziony!");
             }
         }
     }
 
     private void Start()
     {
+        currentRound = 0;
+        endGamePanel.SetActive(false);
+        restartButton.onClick.AddListener(RestartGame);
+
+        scoreToWin = 5;
         isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
         isPlayerTurn = true;
+
+        if (journalButton != null)
+        {
+            journalButton.SetActive(true);
+            journalButton.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(OpenJournal);
+        }
+
+        if (!PlayerPrefs.HasKey("JournalClearedOnce"))
+        {
+            ClearAllJournalDataOnce();
+        }
+
+        ShowIntroDialogueForRound();
+    }
+
+    private void ShowIntroDialogueForRound()
+    {
+        if (introShownThisRound) return;
+        introShownThisRound = true;
+
+        var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
+        if (intro != null)
+        {
+            gameReady = false;
+            dialoguePanel.SetActive(true);
+            dialogueManager.StartDialogue(intro);
+            dialogueManager.OnDialogueEnd += OnIntroDialogueEnd;
+        }
+        else
+        {
+            OnIntroDialogueEnd();
+        }
+    }
+
+    private void OnIntroDialogueEnd()
+    {
+        dialogueManager.OnDialogueEnd -= OnIntroDialogueEnd;
+        dialoguePanel.SetActive(false);
+        startCardGameAfterIntro = true;
+    }
+
+    private void StartCardGameForNewRound()
+    {
+        DeckManager.deckManager.ResetDeck();
+        HandManager.handManager.ClearHand();
+        playerBoard.ClearBoard();
+        enemyBoard.ClearBoard();
+
+        chosenCard = false;
+        chosenColumn = false;
+        isCardBeingPlayed = false;
+        isPlayerTurn = true;
+        introShownThisRound = true;
         gameReady = true;
+
         UpdateScore();
     }
 
     private void Update()
     {
-        if (!isCardBeingPlayed)
+        if (startCardGameAfterIntro)
         {
-            if (chosenCard && chosenColumn) // PLAYING A CARD
+            startCardGameAfterIntro = false;
+            StartCardGameForNewRound();
+            return;
+        }
+
+        if (!gameReady) return;
+
+        if (!isCardBeingPlayed && chosenCard && chosenColumn)
+        {
+            isCardBeingPlayed = true;
+            cardContainerBeingPlayed = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex).GetComponent<CardContainer>();
+
+            if (isPlayerTurn && playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
             {
-                isCardBeingPlayed = true;
-                cardContainerBeingPlayed = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex).GetComponent<CardContainer>();
-                if (isPlayerTurn)
-                {
-                    if (playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
-                    {
-                        //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
-                        chosenCard = chosenColumn = false;
-                        playerBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
-                        HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
-                        //playerBoard.ListBoard();
-                        //HandManager.handManager.ListHand();
-                        UpdateScore();
-                    }
-                    else
-                    {
-                        chosenCard = chosenColumn = false;
-                        Debug.Log("Column full! Pick again.");
-                    }
-                }
-                else
-                {
-                    if (enemyBoard.CheckForEmptyInColumn(chosenColumnIndex))
-                    {
-                        //Debug.Log(chosenCardIndex + " " + chosenColumnIndex);
-                        chosenCard = chosenColumn = false;
-                        enemyBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
-                        HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
-                        //enemyBoard.ListBoard();
-                        //.handManager.ListHand();
-                        UpdateScore();
-                    }
-                    else
-                    {
-                        chosenCard = chosenColumn = false;
-                        Debug.Log("Column full! Pick again.");
-                    }
-                }
+                playerBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
+                ResetChoices();
+                UpdateScore();
+                CheckForRoundEnd();
+            }
+            else if (!isPlayerTurn && enemyBoard.CheckForEmptyInColumn(chosenColumnIndex))
+            {
+                enemyBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
+                ResetChoices();
+                UpdateScore();
+                CheckForRoundEnd();
+            }
+            else
+            {
+                Debug.Log("Column full! Pick again.");
+                ResetChoices();
             }
         }
-        if(isCardBeingPlayed)
+
+        if (isCardBeingPlayed)
         {
             Card playedCard = cardContainerBeingPlayed.GetCardInfo();
             Board inactiveBoard = isPlayerTurn ? enemyBoard : playerBoard;
 
-            if(DoesEffectIdRequireInput(playedCard.effectId) && !inactiveBoard.IsBoardEmpty())
+            if (DoesEffectIdRequireInput(playedCard.effectId) && !inactiveBoard.IsBoardEmpty())
             {
-                Debug.Log("Requires input!");
-                if(chosenCardContainerInPlay)
+                if (chosenCardContainerInPlay)
                 {
-                    chosenCardContainerInPlay = false;
                     isCardBeingPlayed = false;
-                    RemoveCardsWithEqualPoints(chosenColumnIndex, playedCard.points);
                     EffectManager.effectManager.TriggerCardEffect(playedCard.effectId, cardContainerBeingPlayed, chosenCardContainerInPlayObject);
+                    RemoveCardsWithEqualPoints(chosenColumnIndex, playedCard.points);
                     EndTurn();
+                    chosenCardContainerInPlay = false;
                 }
             }
             else
             {
-                Debug.Log("Does not require input!");
-                chosenCardContainerInPlay = false;
                 isCardBeingPlayed = false;
+                EffectManager.effectManager.TriggerCardEffect(playedCard.effectId, cardContainerBeingPlayed, null);
                 RemoveCardsWithEqualPoints(chosenColumnIndex, playedCard.points);
-                EffectManager.effectManager.TriggerCardEffect(playedCard.effectId, cardContainerBeingPlayed, null); 
                 EndTurn();
             }
         }
     }
 
-    private bool DoesEffectIdRequireInput(int effectId)
+    private void PrepareNextRound()
     {
-        if (effectId == 5)
-            return true;
-        if (effectId == 7)
-            return true;
-        if (effectId == 8)
-            return true;
-        return false;
+        DeckManager.deckManager.ResetDeck();
+        HandManager.handManager.ClearHand();
+        playerBoard.ClearBoard();
+        enemyBoard.ClearBoard();
+
+        chosenCard = false;
+        chosenColumn = false;
+        isCardBeingPlayed = false;
+        isPlayerTurn = true;
+        introShownThisRound = false;
+
+        UpdateScore();
+        ShowIntroDialogueForRound();
     }
 
-    public void RemoveCardsWithEqualPoints(int columnIndex, int cardPoints)
+    private void FinishGame(string result, int playerScore, int enemyScore, bool showDialogue)
     {
-        if (isPlayerTurn)
+        gameReady = false;
+
+        if (showDialogue)
         {
-            enemyBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+            StartDialogueScene(dialogueManager.GetDialogueForRound(currentRound));
         }
         else
         {
-            playerBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+            endGamePanel.SetActive(true);
+            resultText.text = result.ToUpper();
+            scoreText.text = $"PLAYER: {playerScore}    ENEMY: {enemyScore}";
         }
     }
 
-    public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
+    public void StartDialogueScene(DialogueData dialogue)
     {
-        if(isPlayerBoard)
+        gameReady = false;
+        dialoguePanel.SetActive(true);
+        dialogueManager.StartDialogue(dialogue);
+
+        dialogueManager.OnDialogueEnd -= OnPostGameDialogueFinished;
+        dialogueManager.OnDialogueEnd += OnPostGameDialogueFinished;
+    }
+
+    private void OnPostGameDialogueFinished()
+    {
+        dialogueManager.OnDialogueEnd -= OnPostGameDialogueFinished;
+        dialoguePanel.SetActive(false);
+
+        int npcIndex = currentRound;
+        int playerChoice = dialogueManager.GetLastPlayerChoice();
+
+        if (!journalOpenedThisDialogue && npcIndex >= 0 && playerChoice >= 0 && journalUpdateManager != null)
         {
-            return playerBoard.CountTypeOnBoard(type);
+            journalOpenedThisDialogue = true;
+            journalUpdateManager.ShowNoteAfterDialogue(npcIndex, playerChoice, () =>
+            {
+                journalOpenedThisDialogue = false;
+                currentRound++;
+                PrepareNextRound();
+            });
         }
         else
         {
-            return playerBoard.CountTypeOnBoard(type);
+            currentRound++;
+            PrepareNextRound();
         }
     }
 
-    public int CountTypeOfCardInColumn(CardType type, bool isPlayerBoard, int columnIndex)
+    private void CheckForRoundEnd()
     {
-        if (isPlayerBoard)
+        if (!gameReady) return;
+
+        bool isPlayerFull = playerBoard.IsBoardFull();
+        bool isEnemyFull = enemyBoard.IsBoardFull();
+        int playerScore = playerBoard.CountScore();
+        int enemyScore = enemyBoard.CountScore();
+        bool boardFull = isPlayerFull || isEnemyFull;
+
+        if (playerScore >= scoreToWin && playerScore > enemyScore)
         {
-            return playerBoard.CountTypeInColumn(type, columnIndex);
+            FinishGame("PLAYER WINS!", playerScore, enemyScore, true);
         }
-        else
+        else if (enemyScore >= scoreToWin && enemyScore > playerScore)
         {
-            return playerBoard.CountTypeInColumn(type, columnIndex);
+            FinishGame("ENEMY WINS!", playerScore, enemyScore, false);
+        }
+        else if (boardFull)
+        {
+            if (playerScore > enemyScore)
+                FinishGame("PLAYER WINS!", playerScore, enemyScore, true);
+            else if (enemyScore > playerScore)
+                FinishGame("ENEMY WINS!", playerScore, enemyScore, false);
+            else
+                FinishGame("DRAW!", playerScore, enemyScore, true);
         }
     }
 
     public void EndTurn()
     {
-        Debug.Log("End turn!");
-        if (isPlayerTurn)
-        {
-            //Debug.Log("Player 1's turn has ended.");
-            isPlayerTurn = false;
-            //Debug.Log("Now it's Player 2's turn.");
-        }
-        else
-        {
-            //Debug.Log("Player 2's turn has ended.");
-            isPlayerTurn = true;
-            //Debug.Log("Now it's Player 1's turn.");
-        }
+        isPlayerTurn = !isPlayerTurn;
+        UpdateDrawTexts();
+        UpdateBackground();
     }
 
-    public bool GetPlayerTurn()
+    public void UpdateScore()
     {
-        return isPlayerTurn;
+        playerScoreCounter.text = $"Your score:\n{playerBoard.CountScore()}";
+        enemyScoreCounter.text = $"Enemy score:\n{enemyBoard.CountScore()}";
+    }
+
+    private void UpdateDrawTexts()
+    {
+        playerDrawText.SetActive(isPlayerTurn);
+        enemyDrawText.SetActive(!isPlayerTurn);
+    }
+
+    private void UpdateBackground()
+    {
+        backgroundImage.sprite = isPlayerTurn ? playerBackground : enemyBackground;
+    }
+
+    private void ResetChoices()
+    {
+        chosenCard = false;
+        chosenColumn = false;
+    }
+
+    private bool DoesEffectIdRequireInput(int effectId)
+    {
+        return effectId == 5 || effectId == 7 || effectId == 8;
+    }
+
+    public bool GetPlayerTurn() => isPlayerTurn;
+
+    public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
+    {
+        return isPlayerBoard ? playerBoard.CountTypeOnBoard(type) : enemyBoard.CountTypeOnBoard(type);
+    }
+
+    public int CountTypeOfCardInColumn(CardType type, bool isPlayerBoard, int columnIndex)
+    {
+        return isPlayerBoard ? playerBoard.CountTypeInColumn(type, columnIndex) : enemyBoard.CountTypeInColumn(type, columnIndex);
     }
 
     public void SetChosenCardIndex(int _chosenCardIndex, bool _isPlayerCard)
@@ -203,10 +362,6 @@ public class GameManager : MonoBehaviour
         {
             chosenCard = true;
             chosenCardIndex = _chosenCardIndex;
-        }
-        else
-        {
-            Debug.Log("Not your turn!");
         }
     }
 
@@ -223,16 +378,51 @@ public class GameManager : MonoBehaviour
             chosenColumn = true;
             chosenColumnIndex = _chosenColumnIndex;
         }
+    }
+
+    public void RemoveCardsWithEqualPoints(int columnIndex, int cardPoints)
+    {
+        if (isPlayerTurn)
+            enemyBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+        else
+            playerBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+    }
+
+    private void RestartGame()
+    {
+        PlayerPrefs.DeleteKey("JournalClearedOnce");
+        ClearAllJournalDataOnce();
+
+        currentRound = 0;
+        introShownThisRound = false;
+        journalOpenedThisDialogue = false;
+
+        PrepareNextRound();
+    }
+
+    private void OpenJournal()
+    {
+        var display = FindFirstObjectByType<JournalDisplayManager>();
+        if (display != null)
+        {
+            int pageToOpen = currentRound > 0 ? currentRound - 1 : 0;
+            display.OpenJournal(pageToOpen);
+        }
         else
         {
-            Debug.Log("Not your turn!");
+            Debug.LogError("Brak JournalDisplayManager w scenie!");
         }
     }
 
-    public void UpdateScore()
+    private void ClearAllJournalDataOnce()
     {
-        playerScoreCounter.text = ("Your score:\n" + playerBoard.CountScore());
-        enemyScoreCounter.text = ("Enemy score:\n" + enemyBoard.CountScore());
+        for (int i = 0; i < 20; i++)
+        {
+            PlayerPrefs.DeleteKey("JournalPage_" + i);
+        }
+
+        PlayerPrefs.SetInt("JournalClearedOnce", 1);
+        PlayerPrefs.Save();
+        Debug.Log("Dziennik wyczyszczony przy starcie gry.");
     }
-    
 }

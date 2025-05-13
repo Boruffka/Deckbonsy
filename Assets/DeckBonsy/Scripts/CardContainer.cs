@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -31,6 +32,11 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void SetCardInfo(Card _cardInfo)
     {
         cardInfo = _cardInfo;
+    }
+
+    public bool GetIsPlayerCard()
+    {
+        return isPlayerCard;
     }
 
     public void SetIsPlayerCard(bool _isPlayerCard)
@@ -71,19 +77,20 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void UpdateCardVisuals()
     {
         handPower.text = "" + cardInfo.points;
-        handName.text = "" + cardInfo.cardName;
+      // handName.text = "" + cardInfo.cardName;
+        GetComponent<Image>().sprite = cardInfo.sprite;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         //Debug.Log("ONMOUSEOVER!" + cardInfo + isPlayerCard);
-        if (cardInfo != null && isPlayerCard)
+        if (cardInfo != null )//&& isPlayerCard)
             HandManager.handManager.ShowCardDescription(cardInfo.cardDescription);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (isPlayerCard)
-            HandManager.handManager.HideCardDescription();
+        HandManager.handManager.HideCardDescription();
     }
+
 }

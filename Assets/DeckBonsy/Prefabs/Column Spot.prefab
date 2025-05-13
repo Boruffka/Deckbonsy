@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bac3bbe601ea05458258985f45b347c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayerBoard: 0
   columnIndex: 0
 --- !u!114 &8442678642660712467
 MonoBehaviour:

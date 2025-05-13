@@ -91,4 +91,21 @@ public class Hand : MonoBehaviour
             positionsOccupied[i] = false;
         }
     }
+
+    public void ClearHand()
+    {
+        for (int i = 0; i < maxHandSize; i++)
+        {
+            if (positionsOccupied[i])
+            {
+                Destroy(cardObjects[i]);
+                hand[i] = null;
+                cardObjects[i] = null;
+                positionsOccupied[i] = false;
+            }
+        }
+
+        currentHandSize = 0;
+    }
+
 }

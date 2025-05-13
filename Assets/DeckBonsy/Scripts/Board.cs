@@ -54,7 +54,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                if (placedCards[i,j]!=null && placedCards[i, j].cardType == type)
+                if (placedCards[i, j] != null && placedCards[i, j].cardType == type)
                 {
                     count++;
                 }
@@ -62,14 +62,14 @@ public class Board : MonoBehaviour
         }
         return count;
     }
-    
+
     public int CountTypeInColumn(CardType type, int columnIndex)
     {
         int count = 0;
 
         for (int i = 0; i < size; i++)
         {
-            if (placedCards[columnIndex, i]!=null && placedCards[columnIndex, i].cardType == type)
+            if (placedCards[columnIndex, i] != null && placedCards[columnIndex, i].cardType == type)
             {
                 count++;
             }
@@ -84,10 +84,10 @@ public class Board : MonoBehaviour
             if (occupiedBoardSpots[columnIndex, i] == false)
             {
                 occupiedBoardSpots[columnIndex, i] = true;
-                placedCardsObjects[columnIndex, i] = Instantiate(addedCard, boardSpots[columnIndex, i].transform.position, 
+                placedCardsObjects[columnIndex, i] = Instantiate(addedCard, boardSpots[columnIndex, i].transform.position,
                     Quaternion.identity, boardSpots[columnIndex, i]);
 
-                CardContainer addedCardContainer = placedCardsObjects[columnIndex,i].GetComponent<CardContainer>();
+                CardContainer addedCardContainer = placedCardsObjects[columnIndex, i].GetComponent<CardContainer>();
                 addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
                 addedCardContainer.SetColumnIndex(columnIndex);
@@ -103,9 +103,9 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < size; i++)
         {
-            for(int j = 0; j < size; j++)
+            for (int j = 0; j < size; j++)
             {
-                if (occupiedBoardSpots[i,j] == true)
+                if (occupiedBoardSpots[i, j] == true)
                 {
                     return false;
                 }
@@ -240,5 +240,34 @@ public class Board : MonoBehaviour
             }
         }
     }
+    public bool IsBoardFull()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (!occupiedBoardSpots[i, j])
+                    return false;
+            }
+        }
+        return true;
+    }
+    public void ClearBoard()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (occupiedBoardSpots[i, j])
+                {
+                    Destroy(placedCardsObjects[i, j]);
+                    placedCards[i, j] = null;
+                    placedCardsObjects[i, j] = null;
+                    occupiedBoardSpots[i, j] = false;
+                }
+            }
+        }
+    }
+
 
 }

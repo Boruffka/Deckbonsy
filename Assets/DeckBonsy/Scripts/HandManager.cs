@@ -1,128 +1,113 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System;
 using TMPro;
 
 public class HandManager : MonoBehaviour
 {
     public static HandManager handManager { get; private set; }
 
-    [Header("Main Variables")]
-
     [Header("References")]
-    [SerializeField] Hand playerHand;
-    [SerializeField] Hand enemyHand;
+    [SerializeField] private Hand playerHand;
+    [SerializeField] private Hand enemyHand;
     [SerializeField] private GameObject descriptionBox;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
+    private bool isHoveringCard = false;
+    private Vector2 boxOffset = new Vector2(160f, -60f);
+
     private void Awake()
     {
-        /// Singleton mechanism
-        {
-            if (handManager != null && handManager != this)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                handManager = this;
-            }
-        }
+        if (handManager != null && handManager != this)
+            Destroy(this);
+        else
+            handManager = this;
+
+        if (descriptionBox != null)
+            descriptionBox.SetActive(false);
+
+        CanvasGroup cg = descriptionBox.GetComponent<CanvasGroup>();
+        if (cg == null) cg = descriptionBox.AddComponent<CanvasGroup>();
+
+        cg.blocksRaycasts = false;   
+        cg.interactable = false;
     }
+
+    private void Update()
+    {
+        if (isHoveringCard && descriptionBox != null)
+        {
+            descriptionBox.SetActive(true);
+            descriptionBox.transform.position = Input.mousePosition + (Vector3)boxOffset;
+        }
+        else if (descriptionBox != null)
+        {
+            descriptionBox.SetActive(false);
+        }
+        {
+            Debug.Log("Update dzia³a");
+        }
+
+    }
+
     public void ShowCardDescription(string desc)
     {
+        isHoveringCard = true;
         descriptionText.text = desc;
-        descriptionBox.SetActive(true);
     }
 
     public void HideCardDescription()
     {
-        descriptionBox.SetActive(false);
+        isHoveringCard = false;
     }
 
     public int GetMaxHandSize()
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            return playerHand.GetMaxHandSize();
-        }
-        else
-        {
-            return enemyHand.GetMaxHandSize();
-        }
+        return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetMaxHandSize() : enemyHand.GetMaxHandSize();
     }
 
     public int GetHandSize()
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            return playerHand.GetHandSize();
-        }
-        else
-        {
-            return enemyHand.GetHandSize();
-        }
+        return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetHandSize() : enemyHand.GetHandSize();
     }
 
     public Card GetCardByIndex(int index)
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            return playerHand.GetCardByIndex(index);
-        }
-        else
-        {
-            return enemyHand.GetCardByIndex(index);
-        }
+        return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetCardByIndex(index) : enemyHand.GetCardByIndex(index);
     }
 
     public GameObject GetCardObjectByIndex(int index)
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            return playerHand.GetCardObjectByIndex(index);
-        }
-        else
-        {
-            return enemyHand.GetCardObjectByIndex(index);
-        }
+        return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetCardObjectByIndex(index) : enemyHand.GetCardObjectByIndex(index);
     }
 
     public void ListHand()
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            playerHand.ListHand();
-        }
-        else
-        {
-            enemyHand.ListHand();
-        }
+        if (GameManager.gameManager.GetPlayerTurn()) playerHand.ListHand();
+        else enemyHand.ListHand();
     }
 
     public void AddCardToHand(Card addedCard)
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            playerHand.AddCardToHand(addedCard);
-        }
-        else
-        {
-            enemyHand.AddCardToHand(addedCard);
-        }
+        if (GameManager.gameManager.GetPlayerTurn()) playerHand.AddCardToHand(addedCard);
+        else enemyHand.AddCardToHand(addedCard);
     }
 
     public void RemoveCardFromHand(int index)
     {
-        if (GameManager.gameManager.GetPlayerTurn())
-        {
-            playerHand.RemoveCardFromHand(index);
-        }
-        else
-        {
-            enemyHand.RemoveCardFromHand(index);
-        }
+        if (GameManager.gameManager.GetPlayerTurn()) playerHand.RemoveCardFromHand(index);
+        else enemyHand.RemoveCardFromHand(index);
+    }
+
+    public void ClearHand()
+    {
+        if (GameManager.gameManager.GetPlayerTurn()) playerHand.ClearHand();
+        else enemyHand.ClearHand();
+    }
+
+    public void ClearAllHands()
+    {
+        playerHand.ClearHand();
+        enemyHand.ClearHand();
     }
 }
