@@ -7,6 +7,8 @@ public class IntroStarter : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private GameObject startGameButton;
+    [SerializeField] private GameObject journalButton;
+
 
 
 
@@ -38,7 +40,6 @@ public class IntroStarter : MonoBehaviour
         var intro = dialogueManager.GetIntroDialogueForRound(0);
         if (intro == null)
         {
-            Debug.LogWarning("⚠️ Brak intro rundy 0!");
             yield break;
         }
 
@@ -87,7 +88,26 @@ public class IntroStarter : MonoBehaviour
         if (startGameButton != null)
             startGameButton.SetActive(false);
 
-        Debug.Log("🎮 Gra rusza przez przycisk lub auto!");
+        if (journalButton != null)
+        {
+            journalButton.SetActive(true);
+
+            var display = FindFirstObjectByType<JournalDisplayManager>();
+            if (display != null && gameManager.CurrentRound == 0)
+            {
+                display.SetMaxPageIndex(0); // zablokuj inne strony
+            }
+
+            journalButton.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            {
+                var display = FindFirstObjectByType<JournalDisplayManager>();
+                if (display != null)
+                {
+                    display.OpenJournal(0); // otwórz stronę 0
+                }
+            });
+        }
+
     }
 
 

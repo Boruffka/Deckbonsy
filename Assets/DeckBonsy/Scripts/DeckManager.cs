@@ -89,12 +89,13 @@ public class DeckManager : MonoBehaviour
 
     public void ResetDeck()
     {
+        cardsInDeck.Clear();
         foreach (Card card in startingDeck)
         {
             cardsInDeck.Add(card);
         }
     }
-    private void ShuffleDeck()
+    public void ShuffleDeck()
     {
         for (int i = 0; i < cardsInDeck.Count; i++)
         {

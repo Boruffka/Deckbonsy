@@ -180,6 +180,7 @@ public class GameManager : MonoBehaviour
     private void StartCardGameForNewRound()
     {
         DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
@@ -262,6 +263,7 @@ public class GameManager : MonoBehaviour
     private void PrepareNextRound()
     {
         DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
@@ -274,6 +276,13 @@ public class GameManager : MonoBehaviour
 
         UpdateScore();
         ShowIntroDialogueForRound();
+
+        var display = FindFirstObjectByType<JournalDisplayManager>();
+        if (display != null)
+        {
+            display.SetMaxPageIndex(3); // odblokuj wszystkie 4 strony
+        }
+
     }
 
     private void FinishGame(string result, int playerScore, int enemyScore, bool showDialogue)
