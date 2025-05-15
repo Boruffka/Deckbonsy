@@ -16,7 +16,13 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private Button enemyDrawButton;
     private Image playerDrawImage;
     private Image enemyDrawImage;
-    
+
+    [Header("Latająca karta")]
+    [SerializeField] private GameObject flyingCardPrefab;
+    [SerializeField] private Transform drawPilePos;  // punkt startu
+    [SerializeField] private Transform handTargetPos; // punkt końcowy
+
+
 
 
     private void Awake()
@@ -133,6 +139,8 @@ public class DeckManager : MonoBehaviour
             HandManager.handManager.AddCardToHand(temp);
             cardsInDeck.RemoveAt(cardsInDeck.Count - 1);
 
+            ShowFlyingCardEffect(temp);
+
             GameManager.gameManager.EndTurn();  // Automatycznie zmienia turę
             UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
         }
@@ -150,5 +158,11 @@ public class DeckManager : MonoBehaviour
         enemyDrawButton.GetComponent<Button>().interactable = !isPlayerTurn;
     }
 
+    private void ShowFlyingCardEffect(Card card)
+    {
+        GameObject fx = Instantiate(flyingCardPrefab, transform.parent); 
+        var comp = fx.GetComponent<FlyingCardEffect>();
+        comp.Launch(card.sprite, drawPilePos.position, handTargetPos.position);
+    }
 
 }
