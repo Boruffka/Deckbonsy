@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -53,8 +53,10 @@ public class DialogueManager : MonoBehaviour
         indicatorImage = continueIndicator.GetComponent<Image>();
         continueIndicator.gameObject.SetActive(false);
 
-
+        continueIndicator.onClick.RemoveAllListeners();
+        continueIndicator.onClick.AddListener(OnContinueClicked);
     }
+
 
     private void Update()
     {
@@ -80,7 +82,7 @@ public class DialogueManager : MonoBehaviour
             case 0: //triceps (nie dziala, przeniesc do sceny po tutorialu)
                 return new DialogueData
                 {
-                    npcLine = "No ju¿, siadaj do sto³u, przekonajmy siê na kogo wychowa³ Ciê najwiêkszy twardziel jakiego by³o mi dane poznaæ. Prawdziw¹ wojowniczkê mo¿na poznaæ tylko na polu bitwy. Mo¿e karty to nie to samo co dobra bitka wrêcz, ale lepsze to ni¿ gadanie o sanda³ach imperatora.",
+                    npcLine = "No juÅ¼, siadaj do stoÅ‚u, przekonajmy siÄ™ na kogo wychowaÅ‚ CiÄ™ najwiÄ™kszy twardziel jakiego byÅ‚o mi dane poznaÄ‡. PrawdziwÄ… wojowniczkÄ™ moÅ¼na poznaÄ‡ tylko na polu bitwy. MoÅ¼e karty to nie to samo co dobra bitka wrÄ™cz, ale lepsze to niÅ¼ gadanie o sandaÅ‚ach imperatora.",
                     playerChoices = new string[0],
                     endings = new int[0],
                     npcImage = npcImageRound0,
@@ -89,7 +91,7 @@ public class DialogueManager : MonoBehaviour
             case 1: //flint
                 return new DialogueData
                 {
-                    npcLine = "Hmmm, trzy razy szeœæ to bêdzie osiemnaœcie, mniej wiêcej tyle zapalniczek dziennie trafia na odrzut, a to wszystko z powodu jakiejœ drobnej wady. Wynios³em ich z fabryki ju¿ wystarczaj¹c¹ iloœæ, ¿eby zacz¹æ pracowaæ nad prototypem! Twój ojciec by³ zawsze sceptyczny w stosunku do moich wynalazków, ale w twoich oczach widzê… iskrê, iskrê która roznieci tutaj ogieñ. A jeœli chodzi o po¿ary to nie mog³aœ trafiæ lepiej! Siadaj zagrajmy jak piroman z piromanem, hahaha!",
+                    npcLine = "Hmmm, trzy razy szeÅ›Ä‡ to bÄ™dzie osiemnaÅ›cie, mniej wiÄ™cej tyle zapalniczek dziennie trafia na odrzut, a to wszystko z powodu jakiejÅ› drobnej wady. WyniosÅ‚em ich z fabryki juÅ¼ wystarczajÄ…cÄ… iloÅ›Ä‡, Å¼eby zaczÄ…Ä‡ pracowaÄ‡ nad prototypem! TwÃ³j ojciec byÅ‚ zawsze sceptyczny w stosunku do moich wynalazkÃ³w, ale w twoich oczach widzÄ™â€¦ iskrÄ™, iskrÄ™ ktÃ³ra roznieci tutaj ogieÅ„. A jeÅ›li chodzi o poÅ¼ary to nie mogÅ‚aÅ› trafiÄ‡ lepiej! Siadaj zagrajmy jak piroman z piromanem, hahaha!",
                     playerChoices = new string[0],
                     endings = new int[0],
                     npcImage = npcImageRound1,
@@ -99,7 +101,7 @@ public class DialogueManager : MonoBehaviour
             case 2: //fabius
                 return new DialogueData
                 {
-                    npcLine = "Œmieræ twojego ojca jest wielk¹ strat¹, nie tylko dla waszego gatunku... M¹dry by³ z niego towarzysz, a jak siê z nim gra³o w deckbonsy! Wiem, ¿e ciê¿ko jest w to uwierzyæ, w koñcu jestem stra¿nikiem, ale za czasów mojej s³u¿by cieliœmy z Twoim starszym w karty jak równy z równym. Mo¿e moja kondycja nie jest jak dawniej, ale uwierz mi… mój umys³ nadal pracuje. widzê co siê dzieje. ta agresja… Wiem, ¿e jesteœcie wœciekli,, ale politycy… oni s¹ bezwzglêdni. ¯ycia tylu ludzi…niewolników, cywili, nie znacz¹ dla nich wiêcej ni¿ ten piach (kopie w ziemiê z rezygnacj¹)… Mo¿e jest jakieœ pokojowe wyjœcie, które pomo¿e nam unikn¹æ masakry.  Jestem w stanie zaoferowaæ swoj¹ pomoc!",
+                    npcLine = "ÅšmierÄ‡ twojego ojca jest wielkÄ… stratÄ…, nie tylko dla waszego gatunku... MÄ…dry byÅ‚ z niego towarzysz, a jak siÄ™ z nim graÅ‚o w deckbonsy! Wiem, Å¼e ciÄ™Å¼ko jest w to uwierzyÄ‡, w koÅ„cu jestem straÅ¼nikiem, ale za czasÃ³w mojej sÅ‚uÅ¼by cieliÅ›my z Twoim starszym w karty jak rÃ³wny z rÃ³wnym. MoÅ¼e moja kondycja nie jest jak dawniej, ale uwierz miâ€¦ mÃ³j umysÅ‚ nadal pracuje. widzÄ™ co siÄ™ dzieje. ta agresjaâ€¦ Wiem, Å¼e jesteÅ›cie wÅ›ciekli,, ale politycyâ€¦ oni sÄ… bezwzglÄ™dni. Å»ycia tylu ludziâ€¦niewolnikÃ³w, cywili, nie znaczÄ… dla nich wiÄ™cej niÅ¼ ten piach (kopie w ziemiÄ™ z rezygnacjÄ…)â€¦ MoÅ¼e jest jakieÅ› pokojowe wyjÅ›cie, ktÃ³re pomoÅ¼e nam uniknÄ…Ä‡ masakry.  Jestem w stanie zaoferowaÄ‡ swojÄ… pomoc!",
                     playerChoices = new string[0],
                     endings = new int[0],
                     npcImage = npcImageRound1,
@@ -109,7 +111,7 @@ public class DialogueManager : MonoBehaviour
             case 3: //minerva
                 return new DialogueData
                 {
-                    npcLine = "Proszê proszê… Nowy przedstawiciel wielkiego wyzwolenia. Widzê, ¿e jak na razie wasze irracjonalne plany siê nie zmieniaj¹. Ale có¿… nie ka¿dy myœli o tych najs³abszych, których czeka najwiêksze niebezpieczeñstwo… albo o tych, których nie do koñca interesuj¹ losy waszej rasy. Ale do rzeczy. Twój ojciec twierdzi³, ¿e ma dla mnie ca³kiem nie najgorszy uk³ad. Mam nadziejê, ¿e masz w sobie tyle rozumu co on i zaoferujesz mi coœ co bêdzie korzystne nie tylko dla ciebie, ale i dla mnie. Mo¿e moja przychylnoœæ do was nie niesie za sob¹ niczego wielkiego, ale jej brak… Nie wiem czy ryzykowa³abym go doœwiadczaæ.",
+                    npcLine = "ProszÄ™ proszÄ™â€¦ Nowy przedstawiciel wielkiego wyzwolenia. WidzÄ™, Å¼e jak na razie wasze irracjonalne plany siÄ™ nie zmieniajÄ…. Ale cÃ³Å¼â€¦ nie kaÅ¼dy myÅ›li o tych najsÅ‚abszych, ktÃ³rych czeka najwiÄ™ksze niebezpieczeÅ„stwoâ€¦ albo o tych, ktÃ³rych nie do koÅ„ca interesujÄ… losy waszej rasy. Ale do rzeczy. TwÃ³j ojciec twierdziÅ‚, Å¼e ma dla mnie caÅ‚kiem nie najgorszy ukÅ‚ad. Mam nadziejÄ™, Å¼e masz w sobie tyle rozumu co on i zaoferujesz mi coÅ› co bÄ™dzie korzystne nie tylko dla ciebie, ale i dla mnie. MoÅ¼e moja przychylnoÅ›Ä‡ do was nie niesie za sobÄ… niczego wielkiego, ale jej brakâ€¦ Nie wiem czy ryzykowaÅ‚abym go doÅ›wiadczaÄ‡.",
                     playerChoices = new string[0],
                     endings = new int[0],
                     npcImage = npcImageRound1,
@@ -175,7 +177,12 @@ public class DialogueManager : MonoBehaviour
         npcImageHolder.rectTransform.anchoredPosition = finalPos;
 
         yield return new WaitForSeconds(0.2f);
-        yield return StartCoroutine(TypewriterEffect(dialogue.npcLine));
+
+        // NOWA CZÄ˜ÅšÄ†
+        yield return StartCoroutine(TypewriterEffect(dialogue.npcLine, dialogue));
+
+        // Czekaj na 0.1 sekundy, Å¼eby upewniÄ‡ siÄ™ Å¼e coroutine siÄ™ zakoÅ„czyÅ‚a
+        yield return new WaitForSeconds(0.1f);
 
         if (dialogue.playerChoices == null || dialogue.playerChoices.Length == 0)
         {
@@ -184,10 +191,11 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(0.3f);
-            ShowChoiceButtons();
+            ShowChoiceButtons(); 
         }
     }
+
+
     private List<string> SplitIntoSentences(string text)
     {
         var sentences = new List<string>();
@@ -211,7 +219,7 @@ public class DialogueManager : MonoBehaviour
     private bool hasClickedContinue = false;
 
 
-    private IEnumerator TypewriterEffect(string fullText)
+    private IEnumerator TypewriterEffect(string fullText, DialogueData dialogue)
     {
         npcText.text = "";
         List<string> sentences = SplitIntoSentences(fullText);
@@ -226,30 +234,25 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(0.03f);
             }
 
+            bool isLastSentence = (i == sentences.Count - 1);
             continueIndicator.gameObject.SetActive(true);
             waitingForClick = true;
             blinkTimer = 0f;
             blinkDark = false;
 
-            yield return new WaitUntil(() =>
-                Input.GetKeyDown(KeyCode.Space) ||
-                Input.GetMouseButtonDown(0) ||
-                hasClickedContinue
-            );
+            yield return new WaitUntil(() => hasClickedContinue);
 
             hasClickedContinue = false;
             waitingForClick = false;
             continueIndicator.gameObject.SetActive(false);
 
-            // jeœli to ostatnie zdanie — koñczymy dialog
-            if (i == sentences.Count - 1)
+            if (isLastSentence)
             {
-                EndDialogue();
                 yield break;
             }
         }
-
     }
+
 
 
     private void HideChoiceButtons()
@@ -257,6 +260,7 @@ public class DialogueManager : MonoBehaviour
         foreach (var button in choiceButtons)
             button.gameObject.SetActive(false);
     }
+
 
     private void ShowChoiceButtons()
     {
@@ -284,9 +288,9 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        // START fallback
         if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
         fallbackCoroutine = StartCoroutine(FallbackAutoEndDialogue());
+
     }
 
     private void OnButtonClick(Button button)
@@ -300,12 +304,13 @@ public class DialogueManager : MonoBehaviour
     {
         if (!waitingForClick) return;
 
+       
+        hasClickedContinue = true;
         waitingForClick = false;
         continueIndicator.gameObject.SetActive(false);
         indicatorImage.color = new Color(1, 1, 1, 1);
-
-        hasClickedContinue = true; 
     }
+
 
 
 
@@ -331,12 +336,14 @@ public class DialogueManager : MonoBehaviour
         if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
 
         SetLastPlayerChoice(choiceIndex);
+        HideChoiceButtons(); 
 
         string playerResponse = currentDialogue.playerExpandedResponses[choiceIndex];
         string npcResponse = currentDialogue.npcResponses[choiceIndex];
 
         StartCoroutine(PlayChoiceSequence(playerResponse, npcResponse));
     }
+
 
     private IEnumerator PlayChoiceSequence(string playerLine, string npcLine)
     {
@@ -354,22 +361,45 @@ public class DialogueManager : MonoBehaviour
         npcText.text = "";
         npcText.color = Color.white;
 
-        foreach (char c in npcLine)
+        List<string> sentences = SplitIntoSentences(npcLine);
+
+        for (int i = 0; i < sentences.Count; i++)
         {
-            npcText.text += c;
-            yield return new WaitForSeconds(0.03f);
+            npcText.text = "";
+            continueIndicator.gameObject.SetActive(false);
+
+            foreach (char c in sentences[i])
+            {
+                npcText.text += c;
+                yield return new WaitForSeconds(0.03f);
+            }
+
+            continueIndicator.gameObject.SetActive(true);
+            waitingForClick = true;
+            blinkTimer = 0f;
+            blinkDark = false;
+
+            yield return new WaitUntil(() => hasClickedContinue);
+
+            hasClickedContinue = false;
+            waitingForClick = false;
+            continueIndicator.gameObject.SetActive(false);
         }
 
-        yield return new WaitForSeconds(1f);
-        EndDialogue();
+        yield return new WaitForSeconds(0.5f);
+        OnDialogueEnd?.Invoke(); 
+
     }
+
+
+
 
     private IEnumerator FallbackAutoEndDialogue()
     {
         yield return new WaitForSeconds(10f);
         if (!hasChosen)
         {
-            Debug.LogWarning("Auto zakoñczono dialog po czasie");
+            Debug.LogWarning("Auto zakoÅ„czono dialog po czasie");
             EndDialogue();
         }
     }
@@ -381,15 +411,15 @@ public class DialogueManager : MonoBehaviour
             case 0: //triceps
                 return new DialogueData
                 {
-                    npcLine = "Muszê przyznaæ, ¿e masz ³eb do taktyki, nic nie wpienia mnie tak jak przegrana, a¿ ma siê ochotê krzykn¹æ IMPERATOR MA HALUKSA!!",
+                    npcLine = "MuszÄ™ przyznaÄ‡, Å¼e masz Å‚eb do taktyki, nic nie wpienia mnie tak jak przegrana, aÅ¼ ma siÄ™ ochotÄ™ krzyknÄ…Ä‡ IMPERATOR MA HALUKSA!!",
                     playerChoices = new[] { "Ucisz krzykiem", "Ucisz niepewnie" },
                     playerExpandedResponses = new[] {
-                    "Triceps! Paszcza w kube³, jak chcesz siê wy¿yæ to zorganizuje ci pierwszy rz¹d w powstaniu, wtedy sklepiesz tyle blaszanych he³mów ile tylko zechcesz.",
-                    "*G³os ze strachu za³amuje ci siê w po³owie zdania* Panie Maximusie…. proszê niech Pan nie robi teraz ha³asu."
+                    "Triceps! Paszcza w kubeÅ‚, jak chcesz siÄ™ wyÅ¼yÄ‡ to zorganizuje ci pierwszy rzÄ…d w powstaniu, wtedy sklepiesz tyle blaszanych heÅ‚mÃ³w ile tylko zechcesz.",
+                    "*GÅ‚os ze strachu zaÅ‚amuje ci siÄ™ w poÅ‚owie zdania* Panie Maximusieâ€¦. proszÄ™ niech Pan nie robi teraz haÅ‚asu."
                 },
                     npcResponses = new[] {
-                    "*gdy dociera do niego twój krzyk, okazuje niepewnoœæ* Wybacz szefowo… *przechodzi gwa³townie z krzyku w szept*. Oczywiœcie, ¿e chcê walczyæ w pierwszym rzêdzie. Po prostu… bardzo jestem zdenerwowany, wkurzony i te inne… Przepraszam za bycie ma³o dyskretnym. Zajmê siê przygotowaniami i ojej… po¿a³uj¹ wszystkiego co nam zrobili. ",
-                    "Nie robiæ ha³asu?! Nie mo¿na siê baæ tych skurczybyków! Trzeba im pokazaæ gdzie ich miejsce! Elity Rzymu upadn¹! I co najwa¿niejsze: IMPERATOR MA HALUKSA!! *po krótkiej chwili widzisz, ¿e w wasz¹ stronê idzie patrol rzymskich stra¿ników. Wiedz¹c co siê œwieci porzucasz rozmowê z Tricepsem i uciekasz ukradkiem*"
+                    "*gdy dociera do niego twÃ³j krzyk, okazuje niepewnoÅ›Ä‡* Wybacz szefowoâ€¦ *przechodzi gwaÅ‚townie z krzyku w szept*. OczywiÅ›cie, Å¼e chcÄ™ walczyÄ‡ w pierwszym rzÄ™dzie. Po prostuâ€¦ bardzo jestem zdenerwowany, wkurzony i te inneâ€¦ Przepraszam za bycie maÅ‚o dyskretnym. ZajmÄ™ siÄ™ przygotowaniami i ojejâ€¦ poÅ¼aÅ‚ujÄ… wszystkiego co nam zrobili. ",
+                    "Nie robiÄ‡ haÅ‚asu?! Nie moÅ¼na siÄ™ baÄ‡ tych skurczybykÃ³w! Trzeba im pokazaÄ‡ gdzie ich miejsce! Elity Rzymu upadnÄ…! I co najwaÅ¼niejsze: IMPERATOR MA HALUKSA!! *po krÃ³tkiej chwili widzisz, Å¼e w waszÄ… stronÄ™ idzie patrol rzymskich straÅ¼nikÃ³w. WiedzÄ…c co siÄ™ Å›wieci porzucasz rozmowÄ™ z Tricepsem i uciekasz ukradkiem*"
                 },
                     endings = new[] { 0, 1 },
                     npcImage = npcImageRound0,
@@ -399,15 +429,15 @@ public class DialogueManager : MonoBehaviour
             case 1: //flint
                 return new DialogueData
                 {
-                    npcLine = "To by³a gor¹ca rozgrywka. No ale ale! Czy zdecydujesz siê na moj¹ propozycjê? Gor¹co zachêcam.",
-                    playerChoices = new[] { "To z³y pomys³", "To nas uratuje" },
+                    npcLine = "To byÅ‚a gorÄ…ca rozgrywka. No ale ale! Czy zdecydujesz siÄ™ na mojÄ… propozycjÄ™? GorÄ…co zachÄ™cam.",
+                    playerChoices = new[] { "To zÅ‚y pomysÅ‚", "To nas uratuje" },
                     playerExpandedResponses = new[] {
-                    "Chyba muszê ostudziæ twój zapa³. Ten prototyp… on mo¿e byæ niebezpieczny równie¿ dla nas. Oczywiœcie, ¿e ka¿da pomoc siê przyda, ale nie ryzykujmy ¿ycia naszych.",
-                    "Musimy próbowaæ z u¿yciem ka¿dej si³y. Rzymianie s¹ bezwzglêdni. Mo¿e to ryzykowny pomys³, ale jeœli ten wynalazek oka¿e siê skuteczny, mo¿e byæ znacz¹cy dla naszego zwyciêstwa."
+                    "Chyba muszÄ™ ostudziÄ‡ twÃ³j zapaÅ‚. Ten prototypâ€¦ on moÅ¼e byÄ‡ niebezpieczny rÃ³wnieÅ¼ dla nas. OczywiÅ›cie, Å¼e kaÅ¼da pomoc siÄ™ przyda, ale nie ryzykujmy Å¼ycia naszych.",
+                    "Musimy prÃ³bowaÄ‡ z uÅ¼yciem kaÅ¼dej siÅ‚y. Rzymianie sÄ… bezwzglÄ™dni. MoÅ¼e to ryzykowny pomysÅ‚, ale jeÅ›li ten wynalazek okaÅ¼e siÄ™ skuteczny, moÅ¼e byÄ‡ znaczÄ…cy dla naszego zwyciÄ™stwa."
                 },
                     npcResponses = new[] {
-                    "Có¿… trochê spodziewa³em siê, ¿e mo¿esz byæ jak twój poprzednik. Niedaleko pada jab³ko od jab³oni, jak to mawiaj¹. Jedyne co mogê powiedzieæ - twoja strata. A raczej nasza. No ale co mogê zrobiæ. Widocznie nie sprzeda³em swojego wynalazku wystarczaj¹co dobrze. Ale jak mo¿esz siê spodziewaæ, mimo twojego braku zgody na jego u¿ycie, oferujê swoj¹ pomoc. ",
-                    "Ha ha! Wiedzia³em, ¿e jesteœ inna. Wyczu³em to od razu. Zapewniam ciê, ¿e wygramy t¹ walkê, a mój gad¿et siê do tego przyczyni. Mo¿e nawet bêdê s³awny. Rzymianie zapamiêtaj¹ mnie jako ich najwiêkszy koszmar. Jeœli któryœ z nich wyjdzie z tego wszystkiego ca³o."
+                    "CÃ³Å¼â€¦ trochÄ™ spodziewaÅ‚em siÄ™, Å¼e moÅ¼esz byÄ‡ jak twÃ³j poprzednik. Niedaleko pada jabÅ‚ko od jabÅ‚oni, jak to mawiajÄ…. Jedyne co mogÄ™ powiedzieÄ‡ - twoja strata. A raczej nasza. No ale co mogÄ™ zrobiÄ‡. Widocznie nie sprzedaÅ‚em swojego wynalazku wystarczajÄ…co dobrze. Ale jak moÅ¼esz siÄ™ spodziewaÄ‡, mimo twojego braku zgody na jego uÅ¼ycie, oferujÄ™ swojÄ… pomoc. ",
+                    "Ha ha! WiedziaÅ‚em, Å¼e jesteÅ› inna. WyczuÅ‚em to od razu. Zapewniam ciÄ™, Å¼e wygramy tÄ… walkÄ™, a mÃ³j gadÅ¼et siÄ™ do tego przyczyni. MoÅ¼e nawet bÄ™dÄ™ sÅ‚awny. Rzymianie zapamiÄ™tajÄ… mnie jako ich najwiÄ™kszy koszmar. JeÅ›li ktÃ³ryÅ› z nich wyjdzie z tego wszystkiego caÅ‚o."
                 },
                     endings = new[] { 0, 1 },
                     npcImage = npcImageRound1,
@@ -417,15 +447,15 @@ public class DialogueManager : MonoBehaviour
             case 2: //fabius
                 return new DialogueData
                 {
-                    npcLine = "Ca³kiem nie najgorzej grasz, moja droga. Widzê, ¿e twój ojciec dobrze nauczy³ ciê taktyki, co pewnie udzieli siê równie¿ na polu bitwy, jednak mo¿e pos³uchasz mojej rady i wykorzystasz swoje zdolnoœci w bardziej dyplomatyczny sposób. B³agam ciê ca³ym sob¹, bo to jedyne co mogê teraz zrobiæ. Rzymianie te¿ potrafi¹ wspó³czuæ, musimy im tylko wskazaæ drogê, pokazaæ, ¿e niewolnictwo to bestialstwo. A wiêc jaka jest twoja decyzja?",
-                    playerChoices = new[] { "Wybieram si³ê", "Wybieram pokój" },
+                    npcLine = "CaÅ‚kiem nie najgorzej grasz, moja droga. WidzÄ™, Å¼e twÃ³j ojciec dobrze nauczyÅ‚ ciÄ™ taktyki, co pewnie udzieli siÄ™ rÃ³wnieÅ¼ na polu bitwy, jednak moÅ¼e posÅ‚uchasz mojej rady i wykorzystasz swoje zdolnoÅ›ci w bardziej dyplomatyczny sposÃ³b. BÅ‚agam ciÄ™ caÅ‚ym sobÄ…, bo to jedyne co mogÄ™ teraz zrobiÄ‡. Rzymianie teÅ¼ potrafiÄ… wspÃ³Å‚czuÄ‡, musimy im tylko wskazaÄ‡ drogÄ™, pokazaÄ‡, Å¼e niewolnictwo to bestialstwo. A wiÄ™c jaka jest twoja decyzja?",
+                    playerChoices = new[] { "Wybieram siÅ‚Ä™", "Wybieram pokÃ³j" },
                     playerExpandedResponses = new[] {
-                    "Nasze ¿ycie siê dla nich nie liczy. Jeœli powstanie ma wybuchn¹æ to musi byæ ono przeprowadzone z ca³¹ si³¹, na jak¹ nas staæ.",
-                    "Mo¿e rzeczywiœcie uda nam siê coœ ugraæ na drodze dyplomacji. Myœlisz, ¿e potrafi³byœ mi w tym pomóc?"
+                    "Nasze Å¼ycie siÄ™ dla nich nie liczy. JeÅ›li powstanie ma wybuchnÄ…Ä‡ to musi byÄ‡ ono przeprowadzone z caÅ‚Ä… siÅ‚Ä…, na jakÄ… nas staÄ‡.",
+                    "MoÅ¼e rzeczywiÅ›cie uda nam siÄ™ coÅ› ugraÄ‡ na drodze dyplomacji. MyÅ›lisz, Å¼e potrafiÅ‚byÅ› mi w tym pomÃ³c?"
                 },
                     npcResponses = new[] {
-                    "Oh… czyli to postanowione, historia znów zatacza ko³o… (jego oczy wydaj¹ siê puste, jakby powróci³y do niego wszystkie dawne wspomnienia). (Fabius wstaje od sto³u i przygl¹da siê tobie). Wybacz, ale w takim wypadku nasze drogi musz¹ siê tutaj rozejœæ. ¯yczê wam powodzenia, naprawdê. Ale nawet jeœli wszystko uda siê wam na drodze agresji, to musisz wiedzieæ, ¿e takie wydarzenia zmieniaj¹ ka¿dego. Niech Bogowie maj¹ pod opiek¹ wasze dusze… ",
-                    "Tak! Na bogów, wiem dok³adnie co robiæ! Audiencja. To jest to. Na szczêœcie masz do czynienia z by³ym cenionym stra¿nikiem. Myœlê, ¿e uda mi siê tak¹ zorganizowaæ. Zobaczysz, cywile te¿ bêd¹ po naszej stronie. Przekonamy ich, no oczywiœcie nie wszystkich, ale to zawsze coœ. "
+                    "Ohâ€¦ czyli to postanowione, historia znÃ³w zatacza koÅ‚oâ€¦ (jego oczy wydajÄ… siÄ™ puste, jakby powrÃ³ciÅ‚y do niego wszystkie dawne wspomnienia). (Fabius wstaje od stoÅ‚u i przyglÄ…da siÄ™ tobie). Wybacz, ale w takim wypadku nasze drogi muszÄ… siÄ™ tutaj rozejÅ›Ä‡. Å»yczÄ™ wam powodzenia, naprawdÄ™. Ale nawet jeÅ›li wszystko uda siÄ™ wam na drodze agresji, to musisz wiedzieÄ‡, Å¼e takie wydarzenia zmieniajÄ… kaÅ¼dego. Niech Bogowie majÄ… pod opiekÄ… wasze duszeâ€¦ ",
+                    "Tak! Na bogÃ³w, wiem dokÅ‚adnie co robiÄ‡! Audiencja. To jest to. Na szczÄ™Å›cie masz do czynienia z byÅ‚ym cenionym straÅ¼nikiem. MyÅ›lÄ™, Å¼e uda mi siÄ™ takÄ… zorganizowaÄ‡. Zobaczysz, cywile teÅ¼ bÄ™dÄ… po naszej stronie. Przekonamy ich, no oczywiÅ›cie nie wszystkich, ale to zawsze coÅ›. "
                 },
                     endings = new[] { 0, 1 },
                     npcImage = npcImageRound1,
@@ -435,15 +465,15 @@ public class DialogueManager : MonoBehaviour
             case 3: //minerva
                 return new DialogueData
                 {
-                    npcLine = "No dobrze. Przyznam, ¿e jestem w szoku. Pokona³aœ w karty najbardziej przebieg³¹ mistrzyniê. Ale có¿… zapewniam, ¿e jedna przegrana mnie nie definiuje, poza tym… nie jesteœmy tu tak naprawdê dla kart, prawda? A wiêc poka¿ mi co dla mnie masz.",
-                    playerChoices = new[] { "Ofiaruj azyl", "Oferuj przepustkê" },
+                    npcLine = "No dobrze. Przyznam, Å¼e jestem w szoku. PokonaÅ‚aÅ› w karty najbardziej przebiegÅ‚Ä… mistrzyniÄ™. Ale cÃ³Å¼â€¦ zapewniam, Å¼e jedna przegrana mnie nie definiuje, poza tymâ€¦ nie jesteÅ›my tu tak naprawdÄ™ dla kart, prawda? A wiÄ™c pokaÅ¼ mi co dla mnie masz.",
+                    playerChoices = new[] { "Ofiaruj azyl", "Oferuj przepustkÄ™" },
                     playerExpandedResponses = new[] {
-                    "No dobrze. Skoro tak bardzo zale¿y ci na potencjalnych ofiarach, myœlê ¿e mo¿emy poœwiêciæ kilku walcz¹cych i zorganizowaæ dla dzieci  i bezbronnych jakiœ azyl.",
-                    "Myœlê, ¿e mam coœ, co mog³oby ciê zainteresowaæ… (wyci¹gnij przepustkê wyjœcia z getta)."
+                    "No dobrze. Skoro tak bardzo zaleÅ¼y ci na potencjalnych ofiarach, myÅ›lÄ™ Å¼e moÅ¼emy poÅ›wiÄ™ciÄ‡ kilku walczÄ…cych i zorganizowaÄ‡ dla dzieci  i bezbronnych jakiÅ› azyl.",
+                    "MyÅ›lÄ™, Å¼e mam coÅ›, co mogÅ‚oby ciÄ™ zainteresowaÄ‡â€¦ (wyciÄ…gnij przepustkÄ™ wyjÅ›cia z getta)."
                 },
                     npcResponses = new[] {
-                    "Oh, jak¿e dobroduszny gest. I to dopiero rozmowa ze mn¹ sprawi³a, ¿e obudzi³o siê wasze sumienie? Có¿… chyba bêdê musia³a przyj¹æ tak¹ ofertê, chocia¿ nie ukrywam, ¿e liczy³am na coœ zgo³a innego. No ale… nie mo¿na mieæ wszystkiego, tak? W takim razie pozwól, ¿e na tym zakoñczymy. Mo¿e jeszcze zobaczymy siê w niedalekiej przysz³oœci, chocia¿ mam ku temu spore w¹tpliwoœci. ",
-                    "Hm… nieczyste zagranie.(uœmiecha siê pod nosem) Ale có¿ innego mi pozosta³o… Przynajmniej bêdê mog³a zaj¹æ siê w koñcu problemami swoich ludzi. Zatem… powodzenia. Mo¿e jeœli wygracie bogowie jakimœ cudem oczyszcz¹ twoje sumienie. "
+                    "Oh, jakÅ¼e dobroduszny gest. I to dopiero rozmowa ze mnÄ… sprawiÅ‚a, Å¼e obudziÅ‚o siÄ™ wasze sumienie? CÃ³Å¼â€¦ chyba bÄ™dÄ™ musiaÅ‚a przyjÄ…Ä‡ takÄ… ofertÄ™, chociaÅ¼ nie ukrywam, Å¼e liczyÅ‚am na coÅ› zgoÅ‚a innego. No aleâ€¦ nie moÅ¼na mieÄ‡ wszystkiego, tak? W takim razie pozwÃ³l, Å¼e na tym zakoÅ„czymy. MoÅ¼e jeszcze zobaczymy siÄ™ w niedalekiej przyszÅ‚oÅ›ci, chociaÅ¼ mam ku temu spore wÄ…tpliwoÅ›ci. ",
+                    "Hmâ€¦ nieczyste zagranie.(uÅ›miecha siÄ™ pod nosem) Ale cÃ³Å¼ innego mi pozostaÅ‚oâ€¦ Przynajmniej bÄ™dÄ™ mogÅ‚a zajÄ…Ä‡ siÄ™ w koÅ„cu problemami swoich ludzi. Zatemâ€¦ powodzenia. MoÅ¼e jeÅ›li wygracie bogowie jakimÅ› cudem oczyszczÄ… twoje sumienie. "
                 },
                     endings = new[] { 0, 1 },
                     npcImage = npcImageRound1,

@@ -15,8 +15,15 @@ public class IntroStarter : MonoBehaviour
 
     private void Start()
     {
+        if (GameManager.gameManager.CurrentRound != 0)
+        {
+            this.enabled = false;
+            return;
+        }
+
         StartCoroutine(DelayedIntro());
     }
+
 
     private IEnumerator DelayedIntro()
     {
@@ -45,23 +52,17 @@ public class IntroStarter : MonoBehaviour
         dialogueManager.OnDialogueEnd -= OnIntroEnded;
         introEnded = true;
         waitingForPlayerInput = true;
-        Debug.Log("✅ Intro zakończone — czekam na input gracza (SPACJA)...");
+        //StartGame();
     }
 
     private void Update()
     {
         if (!waitingForPlayerInput) return;
 
-        // Opcja 1: Start po naciśnięciu spacji
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartGame();
-        }
-
-        // Opcja 2 (fallback): automatycznie po 5 sekundach
+      // (fallback) automatycznie po 1.5 sekundach
         if (introEnded)
         {
-            StartCoroutine(AutoStartAfterDelay(5f));
+            StartCoroutine(AutoStartAfterDelay(1f));
             introEnded = false; // zabezpieczenie, żeby tylko raz
         }
     }
@@ -71,7 +72,6 @@ public class IntroStarter : MonoBehaviour
         yield return new WaitForSeconds(delay);
         if (waitingForPlayerInput)
         {
-            Debug.Log("⏱ Minęło 5 sek — startuję grę automatycznie.");
             StartGame();
         }
     }

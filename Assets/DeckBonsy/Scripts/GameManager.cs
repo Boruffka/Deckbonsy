@@ -59,6 +59,13 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        for (int i = 0; i < 20; i++)
+        {
+            PlayerPrefs.DeleteKey("JournalPage_" + i);
+        }
+        PlayerPrefs.Save();
+
+
         if (gameManager != null && gameManager != this)
         {
             Destroy(this);
@@ -95,6 +102,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+       
         //currentRound = 0;
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
@@ -115,8 +123,14 @@ public class GameManager : MonoBehaviour
         {
             ClearAllJournalDataOnce();
         }
+        if (PlayerPrefs.GetInt("GameStartedOnce", 0) == 0)
+        {
+            currentRound = 0;
+            PlayerPrefs.SetInt("GameStartedOnce", 1);
+        }
 
-       // ShowIntroDialogueForRound();
+
+        // ShowIntroDialogueForRound();
     }
 
     private void ShowIntroDialogueForRound()
@@ -296,7 +310,7 @@ public class GameManager : MonoBehaviour
         int npcIndex = currentRound;
         int playerChoice = dialogueManager.GetLastPlayerChoice();
 
-        if (!journalOpenedThisDialogue && npcIndex >= 0 && playerChoice >= 0 && journalUpdateManager != null)
+        if (!journalOpenedThisDialogue && npcIndex == currentRound && playerChoice >= 0 && journalUpdateManager != null)
         {
             journalOpenedThisDialogue = true;
             journalUpdateManager.ShowNoteAfterDialogue(npcIndex, playerChoice, () =>
@@ -347,6 +361,7 @@ public class GameManager : MonoBehaviour
         isPlayerTurn = !isPlayerTurn;
         UpdateDrawTexts();
         UpdateBackground();
+        DeckManager.deckManager.UpdateDrawButtons(isPlayerTurn);
     }
 
     public void UpdateScore()
