@@ -46,6 +46,11 @@ public class HandManager : MonoBehaviour
         }
 
     }
+    public void ClearHands()
+    {
+        playerHand.ClearHand();
+        enemyHand.ClearHand();
+    }
 
     public void ShowCardDescription(string desc)
     {

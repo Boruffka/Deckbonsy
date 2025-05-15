@@ -15,35 +15,35 @@ public class Board : MonoBehaviour
     [SerializeField] private Card[,] placedCards;
     [SerializeField] private GameObject[,] placedCardsObjects;
 
+   
+
     public int CountScore()
     {
-        int score = 0;
+        int total = 0;
 
-        for (int i = 0; i < size; i++)
+        if (columns == null)
         {
-            Dictionary<int, int> valueCounts = new Dictionary<int, int>();
+            Debug.LogError("Brak przypisanych kolumn w Board!");
+            return 0;
+        }
 
-            for (int j = 0; j < size; j++)
+        for (int i = 0; i < columns.Length; i++)
+        {
+            if (columns[i] == null) continue;
+
+            foreach (Transform card in columns[i])
             {
-                Card card = placedCards[i, j];
-                if (card != null)
+                if (card == null) continue;
+
+                CardContainer container = card.GetComponent<CardContainer>();
+                if (container != null && container.GetCardInfo() != null)
                 {
-                    if (valueCounts.ContainsKey(card.points))
-                        valueCounts[card.points]++;
-                    else
-                        valueCounts[card.points] = 1;
+                    total += container.GetCardInfo().points;
                 }
-            }
-
-            foreach (var pair in valueCounts)
-            {
-                int value = pair.Key;
-                int count = pair.Value;
-                score += value * count * count;
             }
         }
 
-        return score;
+        return total;
     }
 
     public int CountTypeOnBoard(CardType type)
@@ -84,8 +84,13 @@ public class Board : MonoBehaviour
             if (occupiedBoardSpots[columnIndex, i] == false)
             {
                 occupiedBoardSpots[columnIndex, i] = true;
-                placedCardsObjects[columnIndex, i] = Instantiate(addedCard, boardSpots[columnIndex, i].transform.position,
-                    Quaternion.identity, boardSpots[columnIndex, i]);
+                placedCardsObjects[columnIndex, i] = Instantiate(
+                 addedCard,
+                 boardSpots[columnIndex, i].transform.position,
+                 Quaternion.identity,
+                 columns[columnIndex] 
+                 );
+
 
                 CardContainer addedCardContainer = placedCardsObjects[columnIndex, i].GetComponent<CardContainer>();
                 addedCardContainer.SetInPlay(true);
@@ -254,38 +259,35 @@ public class Board : MonoBehaviour
     }
     public void ClearBoard()
     {
-        foreach (var column in columns)
+        if (columns == null)
         {
-            var columnScript = column.GetComponent<ColumnSpot>();
-            if (columnScript != null)
-            {
-                columnScript.ClearColumn();
-            }
-            else
-            {
-                Debug.LogWarning("Brakuje komponentu 'Column' w kolumnie!");
-            }
+            Debug.LogError("columns[] nie zostało przypisane w Board.cs!");
+            return;
         }
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < columns.Length; i++)
         {
-            for (int j = 0; j < size; j++)
+            if (columns[i] == null)
             {
-                occupiedBoardSpots[i, j] = false;
+                Debug.LogWarning($"Kolumna {i} jest null, pomijam.");
+                continue;
+            }
 
-                if (placedCardsObjects[i, j] != null)
+            foreach (Transform card in columns[i])
+            {
+                if (card != null)
                 {
-                    Destroy(placedCardsObjects[i, j]);
+                    Destroy(card.gameObject);
                 }
-
-                placedCards[i, j] = null;
-                placedCardsObjects[i, j] = null;
             }
         }
-
-        UpdateBoard();
     }
 
+
+    public void ResetBoard()
+    {
+        ClearBoard();
+    }
 
 
 

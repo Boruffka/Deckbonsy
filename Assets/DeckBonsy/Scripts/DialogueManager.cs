@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using DG.Tweening;
+
 
 public class DialogueManager : MonoBehaviour
 {
@@ -55,6 +57,8 @@ public class DialogueManager : MonoBehaviour
 
         continueIndicator.onClick.RemoveAllListeners();
         continueIndicator.onClick.AddListener(OnContinueClicked);
+        npcCanvasGroup = npcImageHolder.GetComponent<CanvasGroup>();
+
     }
 
 
@@ -132,6 +136,8 @@ public class DialogueManager : MonoBehaviour
 
     public void ShowDialoguePanel() => dialoguePanel.SetActive(true);
 
+    private CanvasGroup npcCanvasGroup;
+
     public void StartDialogue(DialogueData dialogue)
     {
         hasChosen = false;
@@ -150,7 +156,6 @@ public class DialogueManager : MonoBehaviour
         if (dialogue.npcImage != null)
             npcImageHolder.sprite = dialogue.npcImage;
 
-        npcImageHolder.rectTransform.anchoredPosition = new Vector2(-500f, 0);
         npcText.text = "";
         HideChoiceButtons();
 
@@ -159,29 +164,15 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator AnimateNpcAndType(DialogueData dialogue)
     {
-        Vector2 finalPos = new Vector2(196f, -96f);
-        Vector2 startPos = new Vector2(finalPos.x - 600f, finalPos.y);
-
-        npcImageHolder.rectTransform.anchoredPosition = startPos;
-
+        npcCanvasGroup.alpha = 0f;
         float duration = 0.6f;
-        float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            npcImageHolder.rectTransform.anchoredPosition = Vector2.Lerp(startPos, finalPos, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        npcImageHolder.rectTransform.anchoredPosition = finalPos;
+        npcCanvasGroup.DOFade(1f, duration);
+        yield return new WaitForSeconds(duration);
 
         yield return new WaitForSeconds(0.2f);
-
-        // NOWA CZĘŚĆ
         yield return StartCoroutine(TypewriterEffect(dialogue.npcLine, dialogue));
 
-        // Czekaj na 0.1 sekundy, żeby upewnić się że coroutine się zakończyła
         yield return new WaitForSeconds(0.1f);
 
         if (dialogue.playerChoices == null || dialogue.playerChoices.Length == 0)
@@ -191,10 +182,9 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            ShowChoiceButtons(); 
+            ShowChoiceButtons();
         }
     }
-
 
     private List<string> SplitIntoSentences(string text)
     {

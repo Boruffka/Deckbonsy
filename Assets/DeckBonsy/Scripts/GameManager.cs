@@ -133,6 +133,25 @@ public class GameManager : MonoBehaviour
         // ShowIntroDialogueForRound();
     }
 
+    public void StartRound(int round)
+    {
+        currentRound = round;
+        // Resetuj planszę, dobierz karty itd.
+        playerBoard.ClearBoard(); 
+        enemyBoard.ClearBoard();
+
+        HandManager.handManager.ClearHands();
+        DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
+
+        gameManager.isPlayerTurn = true;
+
+        endGamePanel.SetActive(false);
+
+        // Nie odpalaj dialogu — tylko gra:
+        StartCardGameForNewRound();
+    }
+
     private void ShowIntroDialogueForRound()
     {
        
@@ -298,8 +317,10 @@ public class GameManager : MonoBehaviour
             endGamePanel.SetActive(true);
             resultText.text = result.ToUpper();
             scoreText.text = $"PLAYER: {playerScore}    ENEMY: {enemyScore}";
+
         }
     }
+
 
     public void StartDialogueScene(DialogueData dialogue)
     {
@@ -371,12 +392,20 @@ public class GameManager : MonoBehaviour
         UpdateDrawTexts();
         UpdateBackground();
         DeckManager.deckManager.UpdateDrawButtons(isPlayerTurn);
+        UpdateScore();
     }
 
     public void UpdateScore()
     {
-        playerScoreCounter.text = $"Your score:\n{playerBoard.CountScore()}";
-        enemyScoreCounter.text = $"Enemy score:\n{enemyBoard.CountScore()}";
+        Debug.Log(" UpdateScore called!");
+
+        int playerScore = playerBoard.CountScore();
+        int enemyScore = enemyBoard.CountScore();
+
+        Debug.Log($"Player score: {playerScore}, Enemy score: {enemyScore}");
+
+        playerScoreCounter.text = $"Your score:\n{playerScore}";
+        enemyScoreCounter.text = $"Enemy score:\n{enemyScore}";
     }
 
     private void UpdateDrawTexts()
@@ -447,15 +476,33 @@ public class GameManager : MonoBehaviour
 
     private void RestartGame()
     {
-        PlayerPrefs.DeleteKey("JournalClearedOnce");
-        ClearAllJournalDataOnce();
-
-        currentRound = 0;
+        endGamePanel.SetActive(false);
         introShownThisRound = false;
         journalOpenedThisDialogue = false;
 
-        PrepareNextRound();
+        PrepareCurrentRound(); 
     }
+
+    private void PrepareCurrentRound()
+    {
+        playerBoard.ClearBoard(); 
+        enemyBoard.ClearBoard();
+
+        HandManager.handManager.ClearHands();
+        DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
+
+        chosenCard = false;
+        chosenColumn = false;
+        isCardBeingPlayed = false;
+        isPlayerTurn = true;
+
+        UpdateScore();
+
+        // ⬇️ UWAGA: NIE pokazuj dialogu ponownie po porażce!
+        startCardGameAfterIntro = true;
+    }
+
 
     private void OpenJournal()
     {
@@ -482,4 +529,5 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
         Debug.Log("Dziennik wyczyszczony przy starcie gry.");
     }
+
 }

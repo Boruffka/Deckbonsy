@@ -209,6 +209,7 @@ GameObject:
   - component: {fileID: 52710725}
   - component: {fileID: 52710727}
   - component: {fileID: 52710726}
+  - component: {fileID: 52710728}
   m_Layer: 5
   m_Name: npcCharacter
   m_TagString: Untagged
@@ -273,6 +274,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 52710724}
   m_CullTransparentMesh: 1
+--- !u!225 &52710728
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52710724}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &55287671
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,11 +703,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerHand: 1
-  positions: []
-  handSpotPrefab: {fileID: 4293611470547299181, guid: 1b806bf67cc2477409a37f3950e61d86, type: 3}
-  positionsOccupied: 
-  cardObjects: []
   cardPrefab: {fileID: 2596658645299320987, guid: 5f601abe4f4c122479044c0a3866233d, type: 3}
+  cardObjects: []
 --- !u!1 &301343697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1640,7 +1650,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -783, y: -127}
+  m_AnchoredPosition: {x: -783, y: -17}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &822335343
@@ -3178,7 +3188,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 836, y: 181}
+  m_AnchoredPosition: {x: 836, y: 5}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1275037433
@@ -5261,11 +5271,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerHand: 0
-  positions: []
-  handSpotPrefab: {fileID: 4293611470547299181, guid: 1b806bf67cc2477409a37f3950e61d86, type: 3}
-  positionsOccupied: 
-  cardObjects: []
   cardPrefab: {fileID: 2596658645299320987, guid: 5f601abe4f4c122479044c0a3866233d, type: 3}
+  cardObjects: []
 --- !u!1 &2006664255
 GameObject:
   m_ObjectHideFlags: 0
