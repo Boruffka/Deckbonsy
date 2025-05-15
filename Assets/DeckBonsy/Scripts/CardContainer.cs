@@ -10,10 +10,16 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private bool isPlayerCard;
     [SerializeField] private int handIndex;
     [SerializeField] private int columnIndex;
+    [SerializeField] private int rowIndex;
     [SerializeField] private TextMeshProUGUI handPower;
     [SerializeField] private TextMeshProUGUI handName;
     [SerializeField] private bool inPlay;
 
+    public void ResetCard()
+    {
+        cardInfo.SetRemovable(true);
+        cardInfo.SetStealable(true);
+    }
     public bool GetInPlay()
     {
         return inPlay;
@@ -59,6 +65,15 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         return columnIndex;
     }
 
+    public void SetRowIndex(int _rowIndex)
+    {
+        rowIndex = _rowIndex;
+    }
+
+    public int GetRowIndex()
+    {
+        return rowIndex;
+    }
     public void WhenClicked()
     {
         if (!inPlay)

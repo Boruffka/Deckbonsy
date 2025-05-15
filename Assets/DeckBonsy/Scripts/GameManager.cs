@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
 
-        scoreToWin = 5;
+        scoreToWin = 500;
         isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
@@ -133,6 +133,7 @@ public class GameManager : MonoBehaviour
     private void StartCardGameForNewRound()
     {
         DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
@@ -215,6 +216,7 @@ public class GameManager : MonoBehaviour
     private void PrepareNextRound()
     {
         DeckManager.deckManager.ResetDeck();
+        DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
@@ -341,11 +343,15 @@ public class GameManager : MonoBehaviour
 
     private bool DoesEffectIdRequireInput(int effectId)
     {
-        return effectId == 5 || effectId == 7 || effectId == 8;
+        return effectId == 5 || effectId == 8;
     }
 
     public bool GetPlayerTurn() => isPlayerTurn;
 
+    public Card GetCardAtPosition(int columnIndex, int rowIndex, bool isPlayerBoard)
+    {
+        return isPlayerBoard ? playerBoard.GetCardAtPosition(columnIndex, rowIndex) : enemyBoard.GetCardAtPosition(columnIndex, rowIndex);
+    }
     public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
     {
         return isPlayerBoard ? playerBoard.CountTypeOnBoard(type) : enemyBoard.CountTypeOnBoard(type);
@@ -386,6 +392,18 @@ public class GameManager : MonoBehaviour
             enemyBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
         else
             playerBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
+    }
+
+    public void RemoveCardAtPosition(int columnIndex, int rowIndex, bool bypassProtection, bool _isPlayerBoard)
+    {
+        if(_isPlayerBoard)
+        {
+            enemyBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
+        }
+        else
+        {
+            playerBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
+        }
     }
 
     private void RestartGame()

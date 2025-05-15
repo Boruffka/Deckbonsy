@@ -45,7 +45,7 @@ public class HandManager : MonoBehaviour
             descriptionBox.SetActive(false);
         }
         {
-            Debug.Log("Update dzia³a");
+            //Debug.Log("Update dzia³a");
         }
 
     }
@@ -70,7 +70,10 @@ public class HandManager : MonoBehaviour
     {
         return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetHandSize() : enemyHand.GetHandSize();
     }
-
+    public int GetHandSize(bool _isPlayerHand)
+    {
+        return _isPlayerHand ? playerHand.GetHandSize() : enemyHand.GetHandSize();
+    }
     public Card GetCardByIndex(int index)
     {
         return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetCardByIndex(index) : enemyHand.GetCardByIndex(index);
@@ -89,8 +92,18 @@ public class HandManager : MonoBehaviour
 
     public void AddCardToHand(Card addedCard)
     {
-        if (GameManager.gameManager.GetPlayerTurn()) playerHand.AddCardToHand(addedCard);
-        else enemyHand.AddCardToHand(addedCard);
+        if (GameManager.gameManager.GetPlayerTurn()) 
+            playerHand.AddCardToHand(addedCard);
+        else 
+            enemyHand.AddCardToHand(addedCard);
+    }
+
+    public void AddCardToHand(Card addedCard, bool _isPlayerHand)
+    {
+        if (_isPlayerHand) 
+            playerHand.AddCardToHand(addedCard);
+        else 
+            enemyHand.AddCardToHand(addedCard);
     }
 
     public void RemoveCardFromHand(int index)

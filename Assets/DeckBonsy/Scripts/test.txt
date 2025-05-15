@@ -1,0 +1,24 @@
+﻿
+ALL HAIL PAULINA
+FOR HER MIRACLES
+
+0 - basic card
+1 - Emperor 
+2 - Kaeso
+3 - Helion
+4 - Aulus
+5 - Magnus
+6 - Domina
+7 - infiltrator
+8 - złodziej
+
+pasywki aktywne:
+- przy zagrywaniu karty
+- przy usuwaniu karty
+- przy modyfikacji planszy
+
+
+Zabezpieczyć, żeby kolumn
+się nie dało zmienić w
+trakcie zagrywania karty.
+

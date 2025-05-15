@@ -44,8 +44,8 @@ public class DeckManager : MonoBehaviour
         (int, string, string, int, int, CardType, Sprite)[] cardValues = new (int, string, string, int, int, CardType, Sprite)[]
         {
         (0, "Slave","NIEWOLNIK\nJednostka bazowa o wartości 1.", 0, 1, CardType.Slave,cardSprite[0]),
-        (1, "Slave","NIEWOLNIK\nJednostka bazowa o wartości 1.", 0, 1, CardType.Slave,cardSprite[1]),
-        (2, "Slave","NIEWOLNIK\nJednostka bazowa o wartości 1.", 0, 1, CardType.Slave,cardSprite[2]),
+        (1, "Slave","NIEWOLNIK\nJednostka bazowa o wartości 1.", 0,  1, CardType.Slave,cardSprite[1]),
+        (2, "Slave","NIEWOLNIK\nJednostka bazowa o wartości 1.", 0,  1, CardType.Slave,cardSprite[2]),
         (3, "Emperor","IMPERATOR\nKarta specjalna o wartości 6.\nPostrach: Nie może zostać ukradziony przez przeciwnika", 1, 6, CardType.Emperor,cardSprite[3]),
         (4, "Kaeso","SENATOR KAESO MARCELLUS IGNATIUS\nKarta specjalna o wartości 5.\nWsparcie w wyzwoleniu: Dodaje od każdej karty Niewolnik na planszy 1 punkt. Opozycja: Odejmuje 1 punkt za każdą osobę polityczną na planszy.", 2, 5, CardType.Politician,cardSprite[4]),
         (5, "Octavian Helion","PIERWSZY SENATOR OCTAVIANUS HELION\nKarta specjalna o wartości 4.\nZwolennicy: Dodaje kartę Mieszczanin z talii na rękę.\nManipulacja tlumem: Karty Mieszczan umieszczone w tej samej kolumnie zwiększają jego wartość o równowartość ich ilości pomnożonej przez siebie.", 3, 4, CardType.Politician,cardSprite[5]),
@@ -62,7 +62,7 @@ public class DeckManager : MonoBehaviour
         (16, "Citizen","MIESZCZANIN\nJednostka bazowa o wartości 1.", 0, 1, CardType.Citizen,cardSprite[16]),
         (17, "Citizen","MIESZCZANIN\nJednostka bazowa o wartości 1.", 0, 1, CardType.Citizen,cardSprite[17]),
         (18, "Infiltrator","INFILTRATOR\nKarta specjalna o wartości 2.\nBadanie terenu: Zdradza tożsamość pierwszej karty z wierzchu stosu przeciwnika.",7, 2,CardType.Citizen,cardSprite[18]),
-        (19, "Złodziej", "ZŁODZIEJ\nKarta specjalna o wartości 0.\nKradzież tożsamości: Umieszcza dowolną kartę przeciwnika z planszy na ręce gracza i zajmuje jej miejsce.",8,0,CardType.Citizen,cardSprite[19])
+        (19, "Złodziej", "ZŁODZIEJ\nKarta specjalna o wartości 0.\nKradzież tożsamości: Umieszcza dowolną kartę przeciwnika z planszy na ręce gracza i zajmuje jej miejsce.",8, 0,CardType.Citizen,cardSprite[19])
         
         };
 
@@ -76,12 +76,13 @@ public class DeckManager : MonoBehaviour
 
     public void ResetDeck()
     {
+        cardsInDeck.Clear();
         foreach (Card card in startingDeck)
         {
             cardsInDeck.Add(card);
         }
     }
-    private void ShuffleDeck()
+    public void ShuffleDeck()
     {
         for (int i = 0; i < cardsInDeck.Count; i++)
         {
@@ -104,6 +105,10 @@ public class DeckManager : MonoBehaviour
         }
     }
 
+    public Sprite GetCardSprite(int index)
+    {
+        return cardSprite[index];
+    }
     public void DrawCard()
     {
         if (HandManager.handManager.GetHandSize() >= HandManager.handManager.GetMaxHandSize())
