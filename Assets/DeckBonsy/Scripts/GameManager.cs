@@ -76,11 +76,26 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("JournalUpdateManager nie znaleziony!");
             }
         }
+
+        // Ustawienia startowe — PRZENIESIONE Z START()
+        currentRound = 0;
+        introShownThisRound = false;
+        gameReady = false;
+        startCardGameAfterIntro = false;
+
+        if (dialogueManager == null)
+        {
+            Debug.LogWarning("DialogueManager nie przypisany w Inspectorze – próbuję znaleźć go ręcznie.");
+            dialogueManager = FindFirstObjectByType<DialogueManager>();
+        }
+
+        ShowIntroDialogueForRound();
     }
+
 
     private void Start()
     {
-        currentRound = 0;
+        //currentRound = 0;
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
 
@@ -101,17 +116,33 @@ public class GameManager : MonoBehaviour
             ClearAllJournalDataOnce();
         }
 
-        ShowIntroDialogueForRound();
+       // ShowIntroDialogueForRound();
     }
 
     private void ShowIntroDialogueForRound()
     {
-        if (introShownThisRound) return;
-        introShownThisRound = true;
+       
+    
+            if (currentRound == 0)
+            {
+                Debug.Log("⛔ Pomijam intro rundy 0 – obsługuje je IntroStarter.");
+                return;
+            }
 
-        var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
+            Debug.Log("Próba odpalenia intro dla rundy: " + currentRound);
+
+            if (introShownThisRound)
+            {
+                Debug.Log("Intro już pokazane.");
+                return;
+            }
+
+
+            var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
+
         if (intro != null)
         {
+            Debug.Log("Znalazłem intro tekst, uruchamiam StartDialogue!");
             gameReady = false;
             dialoguePanel.SetActive(true);
             dialogueManager.StartDialogue(intro);
@@ -119,9 +150,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Brak intro, przechodzę dalej.");
             OnIntroDialogueEnd();
         }
     }
+
 
     private void OnIntroDialogueEnd()
     {

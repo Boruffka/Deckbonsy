@@ -44,9 +44,6 @@ public class HandManager : MonoBehaviour
         {
             descriptionBox.SetActive(false);
         }
-        {
-            Debug.Log("Update dzia³a");
-        }
 
     }
 

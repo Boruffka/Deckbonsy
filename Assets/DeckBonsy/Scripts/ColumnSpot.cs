@@ -19,4 +19,13 @@ public class ColumnSpot : MonoBehaviour
     {
         GameManager.gameManager.SetChosenColumnIndex(columnIndex, isPlayerBoard);
     }
+
+    public void ClearColumn()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
 }

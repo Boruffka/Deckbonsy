@@ -254,20 +254,39 @@ public class Board : MonoBehaviour
     }
     public void ClearBoard()
     {
+        foreach (var column in columns)
+        {
+            var columnScript = column.GetComponent<ColumnSpot>();
+            if (columnScript != null)
+            {
+                columnScript.ClearColumn();
+            }
+            else
+            {
+                Debug.LogWarning("Brakuje komponentu 'Column' w kolumnie!");
+            }
+        }
+
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
-                if (occupiedBoardSpots[i, j])
+                occupiedBoardSpots[i, j] = false;
+
+                if (placedCardsObjects[i, j] != null)
                 {
                     Destroy(placedCardsObjects[i, j]);
-                    placedCards[i, j] = null;
-                    placedCardsObjects[i, j] = null;
-                    occupiedBoardSpots[i, j] = false;
                 }
+
+                placedCards[i, j] = null;
+                placedCardsObjects[i, j] = null;
             }
         }
+
+        UpdateBoard();
     }
+
+
 
 
 }
