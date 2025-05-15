@@ -1,111 +1,104 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
+using DG.Tweening;
 
 public class Hand : MonoBehaviour
 {
-    [Header("Main Variables")]
     public const int maxHandSize = 3;
     private int currentHandSize = 0;
+
     [SerializeField] private bool isPlayerHand;
-    [SerializeField] private RectTransform[] positions;
-    [SerializeField] private GameObject handSpotPrefab;
-    [SerializeField] private bool[] positionsOccupied;
-    [SerializeField] private GameObject[] cardObjects;
     [SerializeField] private GameObject cardPrefab;
-    [SerializeField] private Card[] hand = new Card[maxHandSize];
+    [SerializeField] private List<GameObject> cardObjects = new();
 
-    public int GetMaxHandSize()
-    {
-        return maxHandSize;
-    }
-    public int GetHandSize()
-    {
-        return currentHandSize;
-    }
+    public int GetMaxHandSize() => maxHandSize;
+    public int GetHandSize() => currentHandSize;
 
-    public Card GetCardByIndex(int index)
-    {
-        return hand[index];
-    }
-
-    public GameObject GetCardObjectByIndex(int index)
-    {
-        return cardObjects[index];
-    }
+    public GameObject GetCardObjectByIndex(int index) => cardObjects[index];
 
     public void AddCardToHand(Card addedCard)
     {
-        for (int i = 0; i < maxHandSize; i++)
+        if (cardObjects.Count >= maxHandSize)
         {
-            if (positionsOccupied[i] == false)
-            {
-                positionsOccupied[i] = true;
-                cardObjects[i] = Instantiate(cardPrefab, positions[i].position, Quaternion.identity);
-                cardObjects[i].GetComponent<CardContainer>().SetCardInfo(addedCard);
-                cardObjects[i].GetComponent<CardContainer>().SetIsPlayerCard(isPlayerHand);
-                cardObjects[i].GetComponent<Transform>().SetParent(positions[i].GetComponent<Transform>());
-                cardObjects[i].GetComponent<CardContainer>().SetHandIndex(i);
-                cardObjects[i].GetComponent<CardContainer>().UpdateCardVisuals();
-                currentHandSize++;
-                return;
-            }
+            Debug.LogWarning("Nie uda³o siê dodaæ karty – rêka pe³na.");
+            return;
         }
+
+        GameObject cardObj = Instantiate(cardPrefab, transform.position, Quaternion.identity, transform);
+        cardObjects.Add(cardObj);
+
+        var container = cardObj.GetComponent<CardContainer>();
+        container.SetCardInfo(addedCard);
+        container.SetIsPlayerCard(isPlayerHand);
+        container.SetHandIndex(cardObjects.Count - 1);
+        container.UpdateCardVisuals();
+
+        RearrangeHand();
     }
+
 
     public void RemoveCardFromHand(int index)
     {
+        if (index < 0 || index >= cardObjects.Count || cardObjects[index] == null) return;
+
         Destroy(cardObjects[index]);
-        positionsOccupied[index] = false;
-        hand[index] = null;
+        cardObjects[index] = null;
+        cardObjects.RemoveAt(index);
         currentHandSize--;
+        RearrangeHand();
+    }
+
+    public void ClearHand()
+    {
+        foreach (var card in cardObjects)
+        {
+            if (card != null) Destroy(card);
+        }
+        cardObjects.Clear();
+        currentHandSize = 0;
+    }
+
+    public void RearrangeHand()
+    {
+        int count = cardObjects.Count;
+        float spacing = 80f;
+        float center = (count - 1) / 2f;
+        float angleStep = 10f;
+
+       Vector3 handCenter = transform.GetChild(0).position + new Vector3(100f, 0, 0);
+
+
+        for (int i = 0; i < count; i++)
+        {
+            var card = cardObjects[i];
+            if (card == null) continue;
+
+            Vector3 targetPosition = handCenter + new Vector3((i - center) * spacing, 0, 0);
+
+            card.transform.DOMove(targetPosition, 0.3f).SetEase(Ease.OutQuad);
+            card.transform.DORotate(new Vector3(0, 0, (i - center) * -angleStep), 0.3f);
+        }
+    }
+
+
+    public Card GetCardByIndex(int index)
+    {
+        if (index < 0 || index >= cardObjects.Count) return null;
+        return cardObjects[index].GetComponent<CardContainer>().GetCardInfo();
     }
 
     public void ListHand()
     {
         string s = "";
-        for (int i = 0; i < maxHandSize; i++)
-        {
-            s += positionsOccupied[i];
-        }
-        Debug.Log(s);
+        foreach (var obj in cardObjects)
+            s += obj != null ? "1 " : "0 ";
+        Debug.Log("Zawartoœæ rêki: " + s);
     }
 
-    private void Awake()
+    public RectTransform GetNextFreeSlot(out int index)
     {
-
-    }
-
-    private void Start()
-    {
-        currentHandSize = 0;
-        cardObjects = new GameObject[maxHandSize];
-        positions = new RectTransform[maxHandSize];
-        positionsOccupied = new bool[maxHandSize];
-
-        for (int i = 0; i < maxHandSize; i++)
-        {
-            GameObject newHandSpot = Instantiate(handSpotPrefab, Vector3.zero, Quaternion.identity, transform.GetChild(0));
-            positions[i] = newHandSpot.GetComponent<RectTransform>();
-            positionsOccupied[i] = false;
-        }
-    }
-
-    public void ClearHand()
-    {
-        for (int i = 0; i < maxHandSize; i++)
-        {
-            if (positionsOccupied[i])
-            {
-                Destroy(cardObjects[i]);
-                hand[i] = null;
-                cardObjects[i] = null;
-                positionsOccupied[i] = false;
-            }
-        }
-
-        currentHandSize = 0;
+        index = cardObjects.Count < maxHandSize ? cardObjects.Count : -1;
+        return index != -1 ? transform as RectTransform : null;
     }
 
 }

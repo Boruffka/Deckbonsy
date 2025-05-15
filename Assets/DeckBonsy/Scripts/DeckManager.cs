@@ -19,8 +19,9 @@ public class DeckManager : MonoBehaviour
 
     [Header("Latająca karta")]
     [SerializeField] private GameObject flyingCardPrefab;
-    [SerializeField] private Transform drawPilePos;  // punkt startu
-    [SerializeField] private Transform handTargetPos; // punkt końcowy
+    [SerializeField] private Transform playerDrawPos;
+    [SerializeField] private Transform enemyDrawPos;
+
 
 
 
@@ -126,25 +127,29 @@ public class DeckManager : MonoBehaviour
 
     public void DrawCard()
     {
-        
-        if (HandManager.handManager.GetHandSize() >= HandManager.handManager.GetMaxHandSize())
+        bool isPlayer = GameManager.gameManager.GetPlayerTurn();
+        Hand currentHand = isPlayer ? HandManager.handManager.playerHand : HandManager.handManager.enemyHand;
+
+        if (currentHand.GetHandSize() >= currentHand.GetMaxHandSize())
         {
-            Debug.Log("Max hand size reached!");
+            Debug.Log("Max hand size reached for " + (isPlayer ? "Player" : "Enemy") + "!");
             return;
         }
 
         if (cardsInDeck.Count > 0)
         {
             Card temp = cardsInDeck[^1];
-            HandManager.handManager.AddCardToHand(temp);
             cardsInDeck.RemoveAt(cardsInDeck.Count - 1);
 
-            ShowFlyingCardEffect(temp);
+            ShowFlyingCardEffect(temp, currentHand); 
+            currentHand.AddCardToHand(temp);
 
-            GameManager.gameManager.EndTurn();  // Automatycznie zmienia turę
+            GameManager.gameManager.EndTurn();
             UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
         }
     }
+
+
 
     public void UpdateDrawButtons(bool isPlayerTurn)
     {
@@ -158,11 +163,15 @@ public class DeckManager : MonoBehaviour
         enemyDrawButton.GetComponent<Button>().interactable = !isPlayerTurn;
     }
 
-    private void ShowFlyingCardEffect(Card card)
+    private void ShowFlyingCardEffect(Card card, Hand targetHand)
     {
-        GameObject fx = Instantiate(flyingCardPrefab, transform.parent); 
+        bool isPlayer = targetHand == HandManager.handManager.playerHand;
+        Transform start = isPlayer ? playerDrawPos : enemyDrawPos;
+
+        GameObject fx = Instantiate(flyingCardPrefab, transform.parent);
         var comp = fx.GetComponent<FlyingCardEffect>();
-        comp.Launch(card.sprite, drawPilePos.position, handTargetPos.position);
+        comp.Launch(card.sprite, start.position, targetHand.transform.position);
     }
+
 
 }

@@ -8,8 +8,8 @@ public class HandManager : MonoBehaviour
     public static HandManager handManager { get; private set; }
 
     [Header("References")]
-    [SerializeField] private Hand playerHand;
-    [SerializeField] private Hand enemyHand;
+    public Hand playerHand;
+    public Hand enemyHand;
     [SerializeField] private GameObject descriptionBox;
     [SerializeField] private TextMeshProUGUI descriptionText;
 

@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -11,7 +12,6 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private int handIndex;
     [SerializeField] private int columnIndex;
     [SerializeField] private TextMeshProUGUI handPower;
-    [SerializeField] private TextMeshProUGUI handName;
     [SerializeField] private bool inPlay;
 
     public bool GetInPlay()
@@ -83,14 +83,20 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //Debug.Log("ONMOUSEOVER!" + cardInfo + isPlayerCard);
-        if (cardInfo != null )//&& isPlayerCard)
+        if (cardInfo != null)
             HandManager.handManager.ShowCardDescription(cardInfo.cardDescription);
+
+        // powieksz
+        transform.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         HandManager.handManager.HideCardDescription();
+
+        // przywróć normalną skalę
+        transform.DOScale(1f, 0.2f).SetEase(Ease.OutQuad);
     }
+
 
 }
