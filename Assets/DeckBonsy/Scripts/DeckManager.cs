@@ -127,12 +127,25 @@ public class DeckManager : MonoBehaviour
 
     public void DrawCard()
     {
-        bool isPlayer = GameManager.gameManager.GetPlayerTurn();
-        Hand currentHand = isPlayer ? HandManager.handManager.playerHand : HandManager.handManager.enemyHand;
-
-        if (currentHand.GetHandSize() >= currentHand.GetMaxHandSize())
+        if (HandManager.handManager.GetHandSize() >= HandManager.handManager.GetMaxHandSize())
         {
-            Debug.Log("Max hand size reached for " + (isPlayer ? "Player" : "Enemy") + "!");
+            // Dodać komunikat, że nie można dobrać więcej kart
+            Debug.Log("Max hand size reached!");
+            return;
+        }
+        if (cardsInDeck.Count > 0)
+        {
+            Card temp = cardsInDeck[cardsInDeck.Count - 1];
+            HandManager.handManager.AddCardToHand(temp);
+            cardsInDeck.Remove(temp);
+            GameManager.gameManager.EndTurn();
+        }
+    }
+    public void DrawCard(bool forcePlayerTurn) //przeciazenie
+    {
+        if (HandManager.handManager.GetHandSize(forcePlayerTurn) >= HandManager.handManager.GetMaxHandSize())
+        {
+            Debug.Log("Max hand size reached!");
             return;
         }
 
@@ -140,16 +153,15 @@ public class DeckManager : MonoBehaviour
         {
             Card temp = cardsInDeck[^1];
             cardsInDeck.RemoveAt(cardsInDeck.Count - 1);
-
-            ShowFlyingCardEffect(temp, currentHand); 
-            currentHand.AddCardToHand(temp);
-
+            HandManager.handManager.AddCardToHand(temp, forcePlayerTurn);
             GameManager.gameManager.EndTurn();
-            UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
         }
     }
 
-
+    public Sprite GetCardSprite(int index)
+    {
+        return cardSprite[index];
+    }
 
     public void UpdateDrawButtons(bool isPlayerTurn)
     {

@@ -28,4 +28,9 @@ public class ColumnSpot : MonoBehaviour
         }
     }
 
+    private void OnMouseDown()
+    {
+        GameManager.gameManager.SetChosenColumnIndex(columnIndex, isPlayerBoard);
+    }
+
 }

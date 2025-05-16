@@ -11,9 +11,17 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private bool isPlayerCard;
     [SerializeField] private int handIndex;
     [SerializeField] private int columnIndex;
+    [SerializeField] private int rowIndex;
     [SerializeField] private TextMeshProUGUI handPower;
+    [SerializeField] private TextMeshProUGUI handName;
     [SerializeField] private bool inPlay;
 
+
+    public void ResetCard()
+    {
+        cardInfo.SetRemovable(true);
+        cardInfo.SetStealable(true);
+    }
     public bool GetInPlay()
     {
         return inPlay;
@@ -58,45 +66,46 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         return columnIndex;
     }
-
-    public void WhenClicked()
+  
+    public void SetRowIndex(int _rowIndex)
     {
-        if (!inPlay)
-            GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
-        else
-            GameManager.gameManager.SetChosenCardInPlayObject(this);
+        rowIndex = _rowIndex;
     }
 
+    public int GetRowIndex()
+    {
+        return rowIndex;
+    }
     public void UpdateCard()
     {
         cardInfo.SetPoints(cardInfo.basePoints);
         EffectManager.effectManager.TriggerCardEffect(cardInfo.effectId, this, null);
         UpdateCardVisuals();
     }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (!inPlay && isPlayerCard && GameManager.gameManager.GetPlayerTurn())
+        {
+            GameManager.gameManager.SetChosenCardIndex(handIndex, true);
+        }
+    }
+
 
     public void UpdateCardVisuals()
     {
         handPower.text = "" + cardInfo.points;
-      // handName.text = "" + cardInfo.cardName;
+        // handName.text = "" + cardInfo.cardName;
         GetComponent<Image>().sprite = cardInfo.sprite;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (cardInfo != null)
+        //Debug.Log("ONMOUSEOVER!" + cardInfo + isPlayerCard);
+        if (cardInfo != null)//&& isPlayerCard)
             HandManager.handManager.ShowCardDescription(cardInfo.cardDescription);
-
-        // powieksz
-        transform.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack);
     }
-
     public void OnPointerExit(PointerEventData eventData)
     {
         HandManager.handManager.HideCardDescription();
-
-        // przywróć normalną skalę
-        transform.DOScale(1f, 0.2f).SetEase(Ease.OutQuad);
     }
-
-
 }

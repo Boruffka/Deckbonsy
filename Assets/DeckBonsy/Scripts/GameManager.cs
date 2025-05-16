@@ -427,7 +427,7 @@ public class GameManager : MonoBehaviour
 
     private bool DoesEffectIdRequireInput(int effectId)
     {
-        return effectId == 5 || effectId == 7 || effectId == 8;
+        return effectId == 5 || effectId == 8;
     }
 
     public bool GetPlayerTurn() => isPlayerTurn;
@@ -515,6 +515,21 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogError("Brak JournalDisplayManager w scenie!");
+        }
+    }
+    public Card GetCardAtPosition(int columnIndex, int rowIndex, bool isPlayerBoard)
+    {
+        return isPlayerBoard ? playerBoard.GetCardAtPosition(columnIndex, rowIndex) : enemyBoard.GetCardAtPosition(columnIndex, rowIndex);
+    }
+    public void RemoveCardAtPosition(int columnIndex, int rowIndex, bool bypassProtection, bool _isPlayerBoard)
+    {
+        if (_isPlayerBoard)
+        {
+            enemyBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
+        }
+        else
+        {
+            playerBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
         }
     }
 

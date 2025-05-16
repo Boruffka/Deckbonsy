@@ -1,4 +1,5 @@
 ﻿
+
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -15,35 +16,35 @@ public class Board : MonoBehaviour
     [SerializeField] private Card[,] placedCards;
     [SerializeField] private GameObject[,] placedCardsObjects;
 
-   
-
     public int CountScore()
     {
-        int total = 0;
+        int score = 0;
 
-        if (columns == null)
+        for (int i = 0; i < size; i++)
         {
-            Debug.LogError("Brak przypisanych kolumn w Board!");
-            return 0;
-        }
+            Dictionary<int, int> valueCounts = new Dictionary<int, int>();
 
-        for (int i = 0; i < columns.Length; i++)
-        {
-            if (columns[i] == null) continue;
-
-            foreach (Transform card in columns[i])
+            for (int j = 0; j < size; j++)
             {
-                if (card == null) continue;
-
-                CardContainer container = card.GetComponent<CardContainer>();
-                if (container != null && container.GetCardInfo() != null)
+                Card card = placedCards[i, j];
+                if (card != null)
                 {
-                    total += container.GetCardInfo().points;
+                    if (valueCounts.ContainsKey(card.points))
+                        valueCounts[card.points]++;
+                    else
+                        valueCounts[card.points] = 1;
                 }
+            }
+
+            foreach (var pair in valueCounts)
+            {
+                int value = pair.Key;
+                int count = pair.Value;
+                score += value * count * count;
             }
         }
 
-        return total;
+        return score;
     }
 
     public int CountTypeOnBoard(CardType type)
@@ -84,18 +85,14 @@ public class Board : MonoBehaviour
             if (occupiedBoardSpots[columnIndex, i] == false)
             {
                 occupiedBoardSpots[columnIndex, i] = true;
-                placedCardsObjects[columnIndex, i] = Instantiate(
-                 addedCard,
-                 boardSpots[columnIndex, i].transform.position,
-                 Quaternion.identity,
-                 columns[columnIndex] 
-                 );
-
+                placedCardsObjects[columnIndex, i] = Instantiate(addedCard, boardSpots[columnIndex, i].transform.position,
+                    Quaternion.identity, boardSpots[columnIndex, i]);
 
                 CardContainer addedCardContainer = placedCardsObjects[columnIndex, i].GetComponent<CardContainer>();
                 addedCardContainer.SetInPlay(true);
                 addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
                 addedCardContainer.SetColumnIndex(columnIndex);
+                addedCardContainer.SetRowIndex(i);
                 placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
                 UpdateBoard();
                 return;
@@ -134,37 +131,67 @@ public class Board : MonoBehaviour
 
     public void DropFloatingCards(int columnIndex)
     {
+        if (columnIndex < 0 || columnIndex >= size)
+        {
+            Debug.LogWarning("Invalid column index");
+            return;
+        }
+
         int checkedIndex = 2;
-        if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, 2 - checkedIndex] == false
-            && occupiedBoardSpots[columnIndex, 2 - checkedIndex] == false)
-        {
-            occupiedBoardSpots[columnIndex, checkedIndex - 2] = true;
-            occupiedBoardSpots[columnIndex, checkedIndex] = false;
-            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 2].position;
-            placedCards[columnIndex, checkedIndex - 2] = placedCards[columnIndex, checkedIndex];
-            placedCards[columnIndex, checkedIndex] = null;
-        }
-        else if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, checkedIndex - 1] == false)
-        {
-            occupiedBoardSpots[columnIndex, checkedIndex - 1] = true;
-            occupiedBoardSpots[columnIndex, checkedIndex] = false;
-            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 1].position;
-            placedCards[columnIndex, checkedIndex - 1] = placedCards[columnIndex, checkedIndex];
-            placedCards[columnIndex, checkedIndex] = null;
-        }
+        TryDropCard(columnIndex, checkedIndex, 2);
+        TryDropCard(columnIndex, checkedIndex, 1);
+
         checkedIndex = 1;
-        if (occupiedBoardSpots[columnIndex, checkedIndex] == true && occupiedBoardSpots[columnIndex, checkedIndex - 1] == false)
+        TryDropCard(columnIndex, checkedIndex, 1);
+    }
+
+    private void TryDropCard(int column, int fromRow, int toRowOffset)
+    {
+        int toRow = fromRow - toRowOffset;
+        if (toRow < 0 || fromRow >= size || column >= size) return;
+
+        if (occupiedBoardSpots[column, fromRow] &&
+            !occupiedBoardSpots[column, toRow])
         {
-            occupiedBoardSpots[columnIndex, checkedIndex - 1] = true;
-            occupiedBoardSpots[columnIndex, checkedIndex] = false;
-            placedCardsObjects[columnIndex, checkedIndex].transform.position = boardSpots[columnIndex, checkedIndex - 1].position;
-            placedCards[columnIndex, checkedIndex - 1] = placedCards[columnIndex, checkedIndex];
-            placedCards[columnIndex, checkedIndex] = null;
+            GameObject cardObj = placedCardsObjects[column, fromRow];
+            if (cardObj == null || boardSpots[column, toRow] == null)
+            {
+                Debug.Log("Null object at column {column}, row {fromRow} or target {toRow}");
+                return;
+            }
+
+            CardContainer container = cardObj.GetComponent<CardContainer>();
+            if (container == null)
+            {
+                Debug.Log("CardContainer missing on card object.");
+                return;
+            }
+
+            occupiedBoardSpots[column, toRow] = true;
+            occupiedBoardSpots[column, fromRow] = false;
+
+            container.SetRowIndex(toRow);
+            cardObj.transform.position = boardSpots[column, toRow].position;
+            placedCards[column, toRow] = placedCards[column, fromRow];
+            placedCards[column, fromRow] = null;
+            placedCardsObjects[column, toRow] = cardObj;
+            placedCardsObjects[column, fromRow] = null;
         }
     }
 
     public void UpdateBoard()
     {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (occupiedBoardSpots[i, j] == true && placedCardsObjects[i, j] != null)
+                {
+                    placedCardsObjects[i, j].GetComponent<CardContainer>().ResetCard();
+                }
+            }
+        }
+
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -184,16 +211,16 @@ public class Board : MonoBehaviour
         {
             if (occupiedBoardSpots[columnIndex, i] == true && placedCards[columnIndex, i].points == pointValue)
             {
-                RemoveCardFromColumn(columnIndex, i);
+                Debug.Log("Removing card at [" + columnIndex + "," + i + "] ");
+                RemoveCardAtPosition(columnIndex, i);
             }
         }
         DropFloatingCards(columnIndex);
-        UpdateBoard();
     }
 
-    private void RemoveCardFromColumn(int columnIndex, int rowIndex)
+    private void RemoveCardAtPosition(int columnIndex, int rowIndex)
     {
-        if (occupiedBoardSpots[columnIndex, rowIndex] == true)
+        if (occupiedBoardSpots[columnIndex, rowIndex] == true && placedCards[columnIndex, rowIndex].removable == true)
         {
             DeckManager.deckManager.AddCardToDeck(placedCards[columnIndex, rowIndex]);
             occupiedBoardSpots[columnIndex, rowIndex] = false;
@@ -204,7 +231,40 @@ public class Board : MonoBehaviour
         }
         else
         {
-            Debug.Log("You just tried removing a card that does not exist.");
+            if (placedCards[columnIndex, rowIndex].removable == true)
+            {
+                Debug.Log("Card is protected!");
+            }
+            else
+            {
+                Debug.Log("You just tried removing a card that does not exist.");
+            }
+        }
+    }
+
+    public void RemoveCardAtPosition(int columnIndex, int rowIndex, bool bypassProtection)
+    {
+        if (bypassProtection)
+        {
+            if (occupiedBoardSpots[columnIndex, rowIndex] == true)
+            {
+                DeckManager.deckManager.AddCardToDeck(placedCards[columnIndex, rowIndex]);
+                occupiedBoardSpots[columnIndex, rowIndex] = false;
+                placedCards[columnIndex, rowIndex] = null;
+                placedCardsObjects[columnIndex, rowIndex].GetComponent<CardContainer>().SetInPlay(false);
+                Destroy(placedCardsObjects[columnIndex, rowIndex]);
+                UpdateBoard();
+            }
+            else
+            {
+                {
+                    Debug.Log("You just tried removing a card that does not exist.");
+                }
+            }
+        }
+        else
+        {
+            RemoveCardAtPosition(columnIndex, rowIndex);
         }
     }
 
@@ -259,36 +319,38 @@ public class Board : MonoBehaviour
     }
     public void ClearBoard()
     {
-        if (columns == null)
+        for (int i = 0; i < size; i++)
         {
-            Debug.LogError("columns[] nie zostało przypisane w Board.cs!");
-            return;
-        }
-
-        for (int i = 0; i < columns.Length; i++)
-        {
-            if (columns[i] == null)
+            for (int j = 0; j < size; j++)
             {
-                Debug.LogWarning($"Kolumna {i} jest null, pomijam.");
-                continue;
-            }
-
-            foreach (Transform card in columns[i])
-            {
-                if (card != null)
+                if (occupiedBoardSpots[i, j])
                 {
-                    Destroy(card.gameObject);
+                    Destroy(placedCardsObjects[i, j]);
+                    placedCards[i, j] = null;
+                    placedCardsObjects[i, j] = null;
+                    occupiedBoardSpots[i, j] = false;
                 }
             }
         }
     }
 
-
-    public void ResetBoard()
+    public Card GetCardAtPosition(int columnIndex, int rowIndex)
     {
-        ClearBoard();
+        if (occupiedBoardSpots[columnIndex, rowIndex])
+        {
+            return placedCards[columnIndex, rowIndex];
+        }
+        Debug.Log("Error in GetCardAtPosition(" + columnIndex + "," + rowIndex + ")");
+        return null;
     }
-
-
+    public CardContainer GetCardContainerAtPosition(int columnIndex, int rowIndex)
+    {
+        if (occupiedBoardSpots[columnIndex, rowIndex])
+        {
+            return placedCardsObjects[columnIndex, rowIndex].GetComponent<CardContainer>();
+        }
+        Debug.Log("Error in GetCardContainerAtPosition(" + columnIndex + "," + rowIndex + ")");
+        return null;
+    }
 
 }

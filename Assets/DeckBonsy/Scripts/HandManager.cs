@@ -72,6 +72,10 @@ public class HandManager : MonoBehaviour
     {
         return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetHandSize() : enemyHand.GetHandSize();
     }
+    public int GetHandSize(bool _isPlayerHand)
+    {
+        return _isPlayerHand ? playerHand.GetHandSize() : enemyHand.GetHandSize();
+    }
 
     public Card GetCardByIndex(int index)
     {
@@ -93,6 +97,13 @@ public class HandManager : MonoBehaviour
     {
         if (GameManager.gameManager.GetPlayerTurn()) playerHand.AddCardToHand(addedCard);
         else enemyHand.AddCardToHand(addedCard);
+    }
+    public void AddCardToHand(Card addedCard, bool _isPlayerHand)
+    {
+        if (_isPlayerHand)
+            playerHand.AddCardToHand(addedCard);
+        else
+            enemyHand.AddCardToHand(addedCard);
     }
 
     public void RemoveCardFromHand(int index)
