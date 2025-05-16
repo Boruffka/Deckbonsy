@@ -1,5 +1,4 @@
-﻿
-
+﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -293,18 +292,28 @@ public class Board : MonoBehaviour
         for (int i = 0; i < size; i++)
         {
             GameObject newColumn = Instantiate(columnPrefab, Vector3.zero, Quaternion.identity, transform.GetChild(0));
-            newColumn.GetComponent<ColumnSpot>().SetColumnIndex(i);
-            newColumn.GetComponent<ColumnSpot>().SetIsPlayerBoard(playerBoard);
+
+            ColumnSpot columnSpot = newColumn.GetComponent<ColumnSpot>();
+            if (columnSpot == null) columnSpot = newColumn.AddComponent<ColumnSpot>();
+
+            columnSpot.SetColumnIndex(i);
+            columnSpot.SetIsPlayerBoard(playerBoard);
+
+            Image img = newColumn.GetComponent<Image>();
+            if (img == null) img = newColumn.AddComponent<Image>();
+            img.color = new Color(1, 1, 1, 0); // przezroczysty
+
             columns[i] = newColumn.GetComponent<RectTransform>();
 
             for (int j = 0; j < size; j++)
             {
-                GameObject newBoardSpot = Instantiate(boardSpotPrefab, Vector3.zero, Quaternion.identity, transform.GetChild(1));
-                boardSpots[i, j] = newBoardSpot.GetComponent<RectTransform>();
+                GameObject newSpot = Instantiate(boardSpotPrefab, Vector3.zero, Quaternion.identity, newColumn.transform);
+                boardSpots[i, j] = newSpot.GetComponent<RectTransform>();
                 occupiedBoardSpots[i, j] = false;
             }
         }
     }
+
     public bool IsBoardFull()
     {
         for (int i = 0; i < size; i++)

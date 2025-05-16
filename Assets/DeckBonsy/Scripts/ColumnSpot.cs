@@ -1,36 +1,54 @@
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using DG.Tweening;
 
-public class ColumnSpot : MonoBehaviour
+public class ColumnSpot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private bool isPlayerBoard;
     [SerializeField] private int columnIndex;
 
-    public void SetIsPlayerBoard(bool _isPlayerBoard)
+    private Image backgroundImage;
+    private Tween highlightTween;
+
+    private static ColumnSpot currentlyHighlightedColumn;
+
+    private void Awake()
     {
-        isPlayerBoard = _isPlayerBoard;
+        backgroundImage = GetComponent<Image>();
+        if (backgroundImage == null)
+            backgroundImage = gameObject.AddComponent<Image>();
+
+        backgroundImage.color = new Color(1f, 1f, 1f, 0f); // ca³kowicie przezroczysty na starcie
     }
 
-    public void SetColumnIndex(int _columnIndex)
+
+    public void SetIsPlayerBoard(bool _isPlayerBoard) => isPlayerBoard = _isPlayerBoard;
+    public void SetColumnIndex(int _columnIndex) => columnIndex = _columnIndex;
+
+    public void WhenClicked() => GameManager.gameManager.SetChosenColumnIndex(columnIndex, isPlayerBoard);
+
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        columnIndex = _columnIndex;
+        if (!CardContainer.IsAnyCardSelected()) return;
+        if (GameManager.gameManager.GetPlayerTurn() != isPlayerBoard) return;
+
+        highlightTween?.Kill();
+        highlightTween = backgroundImage.DOColor(new Color(0f, 1f, 1f, 0.4f), 0.25f); // cyan z przezroczystoœci¹
     }
 
-    public void WhenClicked()
+
+    public void OnPointerExit(PointerEventData eventData)
     {
-        GameManager.gameManager.SetChosenColumnIndex(columnIndex, isPlayerBoard);
+        ResetHighlight();
     }
 
-    public void ClearColumn()
+    public void ResetHighlight()
     {
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
+        highlightTween?.Kill();
+        highlightTween = backgroundImage
+            .DOColor(new Color(1f, 1f, 1f, 0f), 0.25f); // z powrotem przezroczysty
+        if (currentlyHighlightedColumn == this)
+            currentlyHighlightedColumn = null;
     }
-
-    private void OnMouseDown()
-    {
-        GameManager.gameManager.SetChosenColumnIndex(columnIndex, isPlayerBoard);
-    }
-
 }

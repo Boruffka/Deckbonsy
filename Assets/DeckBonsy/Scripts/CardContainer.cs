@@ -19,6 +19,8 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private Tween floatingTween;
     private bool isSelected = false;
+    private static CardContainer selectedCard;
+    public static bool IsAnyCardSelected() => selectedCard != null;
 
 
     private void Awake()
@@ -152,8 +154,10 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void SelectCard()
     {
-        if (isSelected) return;
+        DeselectAllCards(); 
+
         isSelected = true;
+        selectedCard = this;
 
         transform.DOLocalMoveY(originalPosition.y + 90f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() =>
         {
@@ -163,15 +167,18 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         });
     }
 
-
     public void DeselectCard()
     {
         isSelected = false;
 
-        if (floatingTween != null && floatingTween.IsActive()) floatingTween.Kill();
+        if (selectedCard == this)
+            selectedCard = null;
+
+        floatingTween?.Kill();
         transform.DOLocalMoveY(originalPosition.y, 0.25f).SetEase(Ease.InOutQuad);
-        transform.DOScale(Vector3.one, 0.2f); // wróć do normalnej wielkości
+        transform.DOScale(Vector3.one, 0.2f);
     }
+
     public static void DeselectAllCards()
     {
         foreach (var card in FindObjectsOfType<CardContainer>())
