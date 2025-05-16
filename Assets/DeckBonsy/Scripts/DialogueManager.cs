@@ -108,8 +108,8 @@ public class DialogueManager : MonoBehaviour
                     npcLine = "Śmierć twojego ojca jest wielką stratą, nie tylko dla waszego gatunku... Mądry był z niego towarzysz, a jak się z nim grało w deckbonsy! Wiem, że ciężko jest w to uwierzyć, w końcu jestem strażnikiem, ale za czasów mojej służby cieliśmy z Twoim starszym w karty jak równy z równym. Może moja kondycja nie jest jak dawniej, ale uwierz mi… mój umysł nadal pracuje. widzę co się dzieje. ta agresja… Wiem, że jesteście wściekli,, ale politycy… oni są bezwzględni. Życia tylu ludzi…niewolników, cywili, nie znaczą dla nich więcej niż ten piach (kopie w ziemię z rezygnacją)… Może jest jakieś pokojowe wyjście, które pomoże nam uniknąć masakry.  Jestem w stanie zaoferować swoją pomoc!",
                     playerChoices = new string[0],
                     endings = new int[0],
-                    npcImage = npcImageRound1,
-                    backgroundImage = backgroundImageRound1
+                    npcImage = npcImageRound2,
+                    backgroundImage = backgroundImageRound2
                 };
 
             case 3: //minerva
@@ -118,8 +118,8 @@ public class DialogueManager : MonoBehaviour
                     npcLine = "Proszę proszę… Nowy przedstawiciel wielkiego wyzwolenia. Widzę, że jak na razie wasze irracjonalne plany się nie zmieniają. Ale cóż… nie każdy myśli o tych najsłabszych, których czeka największe niebezpieczeństwo… albo o tych, których nie do końca interesują losy waszej rasy. Ale do rzeczy. Twój ojciec twierdził, że ma dla mnie całkiem nie najgorszy układ. Mam nadzieję, że masz w sobie tyle rozumu co on i zaoferujesz mi coś co będzie korzystne nie tylko dla ciebie, ale i dla mnie. Może moja przychylność do was nie niesie za sobą niczego wielkiego, ale jej brak… Nie wiem czy ryzykowałabym go doświadczać.",
                     playerChoices = new string[0],
                     endings = new int[0],
-                    npcImage = npcImageRound1,
-                    backgroundImage = backgroundImageRound1
+                    npcImage = npcImageRound3,
+                    backgroundImage = backgroundImageRound3
                 };
 
 

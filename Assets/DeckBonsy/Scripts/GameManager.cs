@@ -389,10 +389,15 @@ public class GameManager : MonoBehaviour
     public void EndTurn()
     {
         isPlayerTurn = !isPlayerTurn;
+        CardContainer.DeselectAllCards();
         UpdateDrawTexts();
         UpdateBackground();
         DeckManager.deckManager.UpdateDrawButtons(isPlayerTurn);
         UpdateScore();
+        foreach (var card in FindObjectsOfType<CardContainer>())
+        {
+            card.UpdateInteractivityVisual();
+        }
     }
 
     public void UpdateScore()
