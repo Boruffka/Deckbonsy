@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -67,7 +67,6 @@ public class EffectManager : MonoBehaviour
 
             int dec = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Politician, playedCard.GetIsPlayerCard());
             int inc = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Slave, playedCard.GetIsPlayerCard());
-
             Debug.Log("Kaeso effect trigger! (" + (1 + (inc*inc) - dec) + ")");
             cardInfo.IncreasePoints(1 + (inc*inc) - dec); // despite it saying "Increase" it can decrease the value :*
             // 1+ is there because this fella counts himself :D
@@ -82,7 +81,7 @@ public class EffectManager : MonoBehaviour
                 cardInfo.SetEffectFired(true);
 
                 Card mockCitizen = new Card();
-                mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o wartoœci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
+                mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o wartoï¿½ci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
 
                 Debug.Log("Helion's Citizen card added!");
                 HandManager.handManager.AddCardToHand(mockCitizen, playedCard.GetIsPlayerCard());

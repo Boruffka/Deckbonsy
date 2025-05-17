@@ -32,6 +32,14 @@ public class JournalDisplayManager : MonoBehaviour
 
     private void Start()
     {
+        {
+            var triggers = GetComponents<EventTrigger>();
+            foreach (var t in triggers)
+            {
+                Destroy(t);
+            }
+        }
+
         if (!journalPanel.activeSelf)
         {
             journalPanel.SetActive(false);
@@ -45,6 +53,13 @@ public class JournalDisplayManager : MonoBehaviour
         if (previousPageButton) AddHoverEffect(previousPageButton, leftArrowNormal, leftArrowHighlighted);
 
         if (journalSceneButton) AddHoverEffect(journalSceneButton, journalNormal, journalHighlighted);
+    }
+
+    private int maxPageIndex = int.MaxValue; // domyślnie bez ograniczenia
+
+    public void SetMaxPageIndex(int maxIndex)
+    {
+        maxPageIndex = Mathf.Clamp(maxIndex, 0, pageSprites.Count - 1);
     }
 
     private void AddHoverEffect(Button button, Sprite normal, Sprite highlighted)
@@ -90,7 +105,7 @@ public class JournalDisplayManager : MonoBehaviour
 
     private void NextPage()
     {
-        if (currentPage < pageSprites.Count - 1)
+        if (currentPage < maxPageIndex)
         {
             currentPage++;
             UpdateJournalPage();
@@ -105,6 +120,7 @@ public class JournalDisplayManager : MonoBehaviour
             UpdateJournalPage();
         }
     }
+
 
     private void UpdateJournalPage()
     {

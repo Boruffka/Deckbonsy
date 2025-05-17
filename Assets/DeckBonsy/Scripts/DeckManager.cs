@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DeckManager : MonoBehaviour
 {
@@ -11,6 +12,19 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private Card[] startingDeck;
     [SerializeField] private List<Card> cardsInDeck;
     [SerializeField] private Sprite[] cardSprite;
+    [SerializeField] private Button playerDrawButton;
+    [SerializeField] private Button enemyDrawButton;
+    private Image playerDrawImage;
+    private Image enemyDrawImage;
+
+    [Header("Latająca karta")]
+    [SerializeField] private GameObject flyingCardPrefab;
+    [SerializeField] private Transform playerDrawPos;
+    [SerializeField] private Transform enemyDrawPos;
+
+
+
+
 
     private void Awake()
     {
@@ -36,7 +50,13 @@ public class DeckManager : MonoBehaviour
         ResetDeck();
         ShuffleDeck();
         ListDeck();
+
+        playerDrawImage = playerDrawButton.GetComponent<Image>();
+        enemyDrawImage = enemyDrawButton.GetComponent<Image>();
+
+        UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
     }
+
 
     public void MockDeck()
     {
@@ -125,5 +145,49 @@ public class DeckManager : MonoBehaviour
             GameManager.gameManager.EndTurn();
         }
     }
+    public void DrawCard(bool forcePlayerTurn) //przeciazenie
+    {
+        if (HandManager.handManager.GetHandSize(forcePlayerTurn) >= HandManager.handManager.GetMaxHandSize())
+        {
+            Debug.Log("Max hand size reached!");
+            return;
+        }
+
+        if (cardsInDeck.Count > 0)
+        {
+            Card temp = cardsInDeck[^1];
+            cardsInDeck.RemoveAt(cardsInDeck.Count - 1);
+            HandManager.handManager.AddCardToHand(temp, forcePlayerTurn);
+            GameManager.gameManager.EndTurn();
+        }
+    }
+
+    public Sprite GetCardSprite(int index)
+    {
+        return cardSprite[index];
+    }
+
+    public void UpdateDrawButtons(bool isPlayerTurn)
+    {
+        if (playerDrawButton != null)
+            playerDrawButton.GetComponent<Image>().color = isPlayerTurn ? Color.white : new Color(1, 1, 1, 0.3f); // aktywny lub przyciemniony
+
+        if (enemyDrawButton != null)
+            enemyDrawButton.GetComponent<Image>().color = !isPlayerTurn ? Color.white : new Color(1, 1, 1, 0.3f); // przeciwnik odwrotnie
+
+        playerDrawButton.GetComponent<Button>().interactable = isPlayerTurn;
+        enemyDrawButton.GetComponent<Button>().interactable = !isPlayerTurn;
+    }
+
+    private void ShowFlyingCardEffect(Card card, Hand targetHand)
+    {
+        bool isPlayer = targetHand == HandManager.handManager.playerHand;
+        Transform start = isPlayer ? playerDrawPos : enemyDrawPos;
+
+        GameObject fx = Instantiate(flyingCardPrefab, transform.parent);
+        var comp = fx.GetComponent<FlyingCardEffect>();
+        comp.Launch(card.sprite, start.position, targetHand.transform.position);
+    }
+
 
 }

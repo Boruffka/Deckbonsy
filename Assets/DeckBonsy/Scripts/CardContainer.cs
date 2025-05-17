@@ -3,8 +3,10 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
-public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+
 {
     [SerializeField] private Card cardInfo;
     [SerializeField] private bool isPlayerCard;
@@ -15,6 +17,16 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private TextMeshProUGUI handName;
     [SerializeField] private bool inPlay;
 
+    private Tween floatingTween;
+    private bool isSelected = false;
+    private static CardContainer selectedCard;
+    public static bool IsAnyCardSelected() => selectedCard != null;
+
+
+    private void Awake()
+    {
+        originalPosition = transform.localPosition;
+    }
     public void ResetCard()
     {
         cardInfo.SetRemovable(true);
@@ -74,12 +86,17 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         return rowIndex;
     }
+
     public void WhenClicked()
+  
+    public void SetRowIndex(int _rowIndex)
     {
-        if (!inPlay)
-            GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
-        else
-            GameManager.gameManager.SetChosenCardInPlayObject(this);
+        rowIndex = _rowIndex;
+    }
+
+    public int GetRowIndex()
+    {
+        return rowIndex;
     }
 
     public void UpdateCard()
@@ -89,23 +106,108 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         UpdateCardVisuals();
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        bool isMyTurn = GameManager.gameManager.GetPlayerTurn() == isPlayerCard;
+        if (!isMyTurn)
+            return;
+
+        DeselectAllCards();
+
+        GameManager.gameManager.SetChosenCardIndex(handIndex, isPlayerCard);
+        GameManager.gameManager.selectedCardIndex = handIndex;
+
+        SelectCard();
+    }
+
     public void UpdateCardVisuals()
     {
         handPower.text = "" + cardInfo.points;
-      // handName.text = "" + cardInfo.cardName;
+        // handName.text = "" + cardInfo.cardName;
         GetComponent<Image>().sprite = cardInfo.sprite;
     }
 
+    private Vector3 originalPosition;
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //Debug.Log("ONMOUSEOVER!" + cardInfo + isPlayerCard);
-        if (cardInfo != null )//&& isPlayerCard)
+        bool isMyTurn = GameManager.gameManager.GetPlayerTurn() == isPlayerCard;
+        if (!isMyTurn)
+            return;
+
+        if (!inPlay && !isSelected)
+        {
+            transform.DOLocalMoveY(originalPosition.y + 30f, 0.2f).SetEase(Ease.OutQuad);
+        }
+
+        if (isSelected)
+        {
+            transform.DOScale(1.1f, 0.2f); // powiększ kartę
+        }
+
+        if (cardInfo != null)
             HandManager.handManager.ShowCardDescription(cardInfo.cardDescription);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!inPlay && !isSelected)
+        {
+            transform.DOLocalMoveY(originalPosition.y, 0.2f).SetEase(Ease.OutQuad);
+        }
+
+        if (isSelected)
+        {
+            transform.DOScale(1f, 0.2f); // wróć do normalnej skali
+        }
+
         HandManager.handManager.HideCardDescription();
+    }
+
+    public void SelectCard()
+    {
+        DeselectAllCards(); 
+
+        isSelected = true;
+        selectedCard = this;
+
+        transform.DOLocalMoveY(originalPosition.y + 90f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() =>
+        {
+            floatingTween = transform.DOLocalMoveY(originalPosition.y + 95f, 0.5f)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
+        });
+    }
+
+    public void DeselectCard()
+    {
+        isSelected = false;
+
+        if (selectedCard == this)
+            selectedCard = null;
+
+        floatingTween?.Kill();
+        transform.DOLocalMoveY(originalPosition.y, 0.25f).SetEase(Ease.InOutQuad);
+        transform.DOScale(Vector3.one, 0.2f);
+    }
+
+    public static void DeselectAllCards()
+    {
+        foreach (var card in FindObjectsOfType<CardContainer>())
+        {
+            card.DeselectCard();
+        }
+    }
+
+    public void UpdateInteractivityVisual()
+    {
+        bool isMyTurn = GameManager.gameManager.GetPlayerTurn() == isPlayerCard;
+        Image image = GetComponent<Image>();
+
+        if (image != null)
+        {
+            image.color = isMyTurn ? Color.white : new Color(1, 1, 1, 0.5f); // przyciemnij nieaktywną
+        }
     }
 
 }
