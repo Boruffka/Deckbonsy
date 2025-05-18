@@ -14,7 +14,15 @@ public class Hand : MonoBehaviour
     public int GetMaxHandSize() => maxHandSize;
     public int GetHandSize() => currentHandSize;
 
-    public GameObject GetCardObjectByIndex(int index) => cardObjects[index];
+    public GameObject GetCardObjectByIndex(int index)
+    {
+        if (index >= 0 && index < cardObjects.Count && cardObjects[index] != null)
+            return cardObjects[index];
+
+        Debug.LogWarning($"[Hand] Nieprawid³owy index karty: {index}, rozmiar rêki: {cardObjects.Count}");
+        return null;
+    }
+
 
     public void AddCardToHand(Card addedCard)
     {

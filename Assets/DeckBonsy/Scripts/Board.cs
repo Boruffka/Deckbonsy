@@ -81,24 +81,36 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < size; i++)
         {
-            if (occupiedBoardSpots[columnIndex, i] == false)
+            if (!occupiedBoardSpots[columnIndex, i])
             {
                 occupiedBoardSpots[columnIndex, i] = true;
-                placedCardsObjects[columnIndex, i] = Instantiate(addedCard, boardSpots[columnIndex, i].transform.position,
-                    Quaternion.identity, boardSpots[columnIndex, i]);
 
-                CardContainer addedCardContainer = placedCardsObjects[columnIndex, i].GetComponent<CardContainer>();
-                addedCardContainer.SetInPlay(true);
-                addedCardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
-                addedCardContainer.SetColumnIndex(columnIndex);
-                addedCardContainer.SetRowIndex(i);
-                placedCards[columnIndex, i] = addedCardContainer.GetCardInfo();
+                GameObject newCard = Instantiate(addedCard);
+                RectTransform newCardRect = newCard.GetComponent<RectTransform>();
+
+                newCardRect.SetParent(boardSpots[columnIndex, i], false);
+                newCardRect.anchoredPosition = Vector2.zero;
+                newCardRect.localRotation = Quaternion.identity;
+                newCardRect.localScale = Vector3.one;
+
+                placedCardsObjects[columnIndex, i] = newCard;
+
+                CardContainer cardContainer = newCard.GetComponent<CardContainer>();
+                cardContainer.SetInPlay(true);
+                cardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
+                cardContainer.SetColumnIndex(columnIndex);
+                cardContainer.SetRowIndex(i);
+                placedCards[columnIndex, i] = cardContainer.GetCardInfo();
+
                 UpdateBoard();
                 return;
             }
         }
+
         Debug.Log("Column full!");
     }
+
+
 
     public bool IsBoardEmpty()
     {
@@ -289,30 +301,49 @@ public class Board : MonoBehaviour
         placedCards = new Card[size, size];
         placedCardsObjects = new GameObject[size, size];
 
+        Transform columnParent = transform.Find("Column Spots");
+
+        if (columnParent == null)
+        {
+            Debug.LogError("Brakuje Column Spots w hierarchii!");
+            return;
+        }
+
         for (int i = 0; i < size; i++)
         {
-            GameObject newColumn = Instantiate(columnPrefab, Vector3.zero, Quaternion.identity, transform.GetChild(0));
+            GameObject columnObj = Instantiate(columnPrefab, columnParent);
+            columnObj.name = $"Column_{i}";
+            RectTransform columnRect = columnObj.GetComponent<RectTransform>();
+            columns[i] = columnRect;
 
-            ColumnSpot columnSpot = newColumn.GetComponent<ColumnSpot>();
-            if (columnSpot == null) columnSpot = newColumn.AddComponent<ColumnSpot>();
+            ColumnSpot columnSpot = columnObj.GetComponent<ColumnSpot>();
+            if (columnSpot == null)
+                columnSpot = columnObj.AddComponent<ColumnSpot>();
 
             columnSpot.SetColumnIndex(i);
             columnSpot.SetIsPlayerBoard(playerBoard);
 
-            Image img = newColumn.GetComponent<Image>();
-            if (img == null) img = newColumn.AddComponent<Image>();
-            img.color = new Color(1, 1, 1, 0); // przezroczysty
+            // Utwórz obiekt Card Spots jako dziecko kolumny
+            GameObject cardSpotsContainer = new GameObject("Card Spots", typeof(RectTransform));
+            cardSpotsContainer.transform.SetParent(columnObj.transform, false);
 
-            columns[i] = newColumn.GetComponent<RectTransform>();
+            RectTransform cardSpotsRect = cardSpotsContainer.GetComponent<RectTransform>();
+            GridLayoutGroup layout = cardSpotsContainer.AddComponent<GridLayoutGroup>();
+            layout.cellSize = new Vector2(180, 180); // lub to co chcesz
+            layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            layout.constraintCount = 1;
 
             for (int j = 0; j < size; j++)
             {
-                GameObject newSpot = Instantiate(boardSpotPrefab, Vector3.zero, Quaternion.identity, newColumn.transform);
-                boardSpots[i, j] = newSpot.GetComponent<RectTransform>();
+                GameObject spot = Instantiate(boardSpotPrefab, cardSpotsContainer.transform);
+                spot.name = $"Spot_{i}_{j}";
+                boardSpots[i, j] = spot.GetComponent<RectTransform>();
                 occupiedBoardSpots[i, j] = false;
             }
         }
     }
+
+
 
     public bool IsBoardFull()
     {
