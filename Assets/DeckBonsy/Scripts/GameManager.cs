@@ -228,7 +228,17 @@ public class GameManager : MonoBehaviour
         if (!isCardBeingPlayed && chosenCard && chosenColumn)
         {
             isCardBeingPlayed = true;
-            cardContainerBeingPlayed = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex).GetComponent<CardContainer>();
+            GameObject cardObj = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex);
+            if (cardObj == null)
+            {
+                Debug.LogWarning($"Nieprawidłowy index karty: {chosenCardIndex}. Przerywam dodawanie.");
+                ResetChoices();
+                isCardBeingPlayed = false;
+                return;
+            }
+
+            cardContainerBeingPlayed = cardObj.GetComponent<CardContainer>();
+
 
             if (isPlayerTurn && playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
             {
