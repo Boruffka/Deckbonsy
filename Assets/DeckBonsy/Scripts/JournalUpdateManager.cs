@@ -25,17 +25,17 @@ public class JournalUpdateManager : MonoBehaviour
     }
 
     public void ShowNoteAfterDialogue(int npcIndex, int playerChoice, Action onNoteComplete)
-{
-    Debug.Log($"🟡 ShowNoteAfterDialogue: npcIndex={npcIndex}, playerChoice={playerChoice}");
-
-    string note = GetChoiceText(npcIndex, playerChoice);
-    Debug.Log($"🟡 Note wygenerowany: {note}");
-
-    if (string.IsNullOrEmpty(note) || npcIndex < 0 || npcIndex >= pageSprites.Count)
     {
-        onNoteComplete?.Invoke(); 
-        return;
-    }
+        Debug.Log($"🟡 ShowNoteAfterDialogue: npcIndex={npcIndex}, playerChoice={playerChoice}");
+
+        string note = GetChoiceText(npcIndex, playerChoice);
+        Debug.Log($"🟡 Note wygenerowany: {note}");
+
+        if (string.IsNullOrEmpty(note) || npcIndex < 0 || npcIndex >= pageSprites.Count)
+        {
+            onNoteComplete?.Invoke();
+            return;
+        }
 
         JournalDataManager.Instance.AddOrUpdateNote(npcIndex, note);
         JournalDataManager.Instance.SaveJournalData();
@@ -44,11 +44,11 @@ public class JournalUpdateManager : MonoBehaviour
         journalPanel.SetActive(true);
         pageImage.sprite = pageSprites[npcIndex];
 
-    if (typingCoroutine != null)
-        StopCoroutine(typingCoroutine);
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
 
-    typingCoroutine = StartCoroutine(TypeNote(note));
-}
+        typingCoroutine = StartCoroutine(TypeNote(note));
+    }
 
 
     private IEnumerator TypeNote(string note)
@@ -70,7 +70,7 @@ public class JournalUpdateManager : MonoBehaviour
         {
             var callback = journalClosedCallback;
             journalClosedCallback = null;
-            callback.Invoke(); 
+            callback.Invoke();
         }
     }
 

@@ -27,6 +27,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         originalPosition = transform.localPosition;
     }
+
     public void ResetCard()
     {
         cardInfo.SetRemovable(true);
@@ -86,19 +87,6 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         return rowIndex;
     }
-
-    public void WhenClicked()
-  
-    public void SetRowIndex(int _rowIndex)
-    {
-        rowIndex = _rowIndex;
-    }
-
-    public int GetRowIndex()
-    {
-        return rowIndex;
-    }
-
     public void UpdateCard()
     {
         cardInfo.SetPoints(cardInfo.basePoints);
@@ -166,7 +154,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void SelectCard()
     {
-        DeselectAllCards(); 
+        DeselectAllCards();
 
         isSelected = true;
         selectedCard = this;

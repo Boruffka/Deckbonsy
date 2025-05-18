@@ -32,7 +32,7 @@ public class EffectManager : MonoBehaviour
         effects[2] = (playedCard, chosenCard) => Effects.Kaeso(playedCard); // halfway done
         effects[3] = (playedCard, chosenCard) => Effects.Helion(playedCard); // ez
         effects[4] = (playedCard, chosenCard) => Effects.Aulus(playedCard); // "memory cloak"
-        effects[5] = (playedCard, chosenCard) => Effects.Magnus(playedCard,chosenCard); // "sap"
+        effects[5] = (playedCard, chosenCard) => Effects.Magnus(playedCard, chosenCard); // "sap"
         effects[6] = (playedCard, chosenCard) => Effects.Domina(playedCard); // done
         effects[7] = (playedCard, chosenCard) => Effects.Infiltrator(playedCard); // "scry??? 1"
         effects[8] = (playedCard, chosenCard) => Effects.Robber(playedCard); // "mind control"
@@ -67,8 +67,9 @@ public class EffectManager : MonoBehaviour
 
             int dec = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Politician, playedCard.GetIsPlayerCard());
             int inc = GameManager.gameManager.CountTypeOfCardOnBoard(CardType.Slave, playedCard.GetIsPlayerCard());
-            Debug.Log("Kaeso effect trigger! (" + (1 + (inc*inc) - dec) + ")");
-            cardInfo.IncreasePoints(1 + (inc*inc) - dec); // despite it saying "Increase" it can decrease the value :*
+
+            Debug.Log("Kaeso effect trigger! (" + (1 + (inc * inc) - dec) + ")");
+            cardInfo.IncreasePoints(1 + (inc * inc) - dec); // despite it saying "Increase" it can decrease the value :*
             // 1+ is there because this fella counts himself :D
         }
 
@@ -76,12 +77,12 @@ public class EffectManager : MonoBehaviour
         {
             Card cardInfo = playedCard.GetCardInfo();
 
-            if(!cardInfo.effectFired)
+            if (!cardInfo.effectFired)
             {
                 cardInfo.SetEffectFired(true);
 
                 Card mockCitizen = new Card();
-                mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o warto�ci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
+                mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o wartoœci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
 
                 Debug.Log("Helion's Citizen card added!");
                 HandManager.handManager.AddCardToHand(mockCitizen, playedCard.GetIsPlayerCard());
@@ -89,8 +90,8 @@ public class EffectManager : MonoBehaviour
 
             int inc = GameManager.gameManager.CountTypeOfCardInColumn(CardType.Citizen, playedCard.GetIsPlayerCard(), playedCard.GetColumnIndex());
 
-            Debug.Log("Helion effect trigger! (" + (inc*inc) + ")");
-            cardInfo.IncreasePoints(inc*inc);
+            Debug.Log("Helion effect trigger! (" + (inc * inc) + ")");
+            cardInfo.IncreasePoints(inc * inc);
             // notice no more +1
         }
 

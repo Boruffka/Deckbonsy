@@ -255,7 +255,7 @@ public class Board : MonoBehaviour
 
     public void RemoveCardAtPosition(int columnIndex, int rowIndex, bool bypassProtection)
     {
-        if(bypassProtection)
+        if (bypassProtection)
         {
             if (occupiedBoardSpots[columnIndex, rowIndex] == true)
             {
@@ -376,7 +376,7 @@ public class Board : MonoBehaviour
 
     public Card GetCardAtPosition(int columnIndex, int rowIndex)
     {
-        if (occupiedBoardSpots[columnIndex,rowIndex])
+        if (occupiedBoardSpots[columnIndex, rowIndex])
         {
             return placedCards[columnIndex, rowIndex];
         }
@@ -385,7 +385,7 @@ public class Board : MonoBehaviour
     }
     public CardContainer GetCardContainerAtPosition(int columnIndex, int rowIndex)
     {
-        if (occupiedBoardSpots[columnIndex,rowIndex])
+        if (occupiedBoardSpots[columnIndex, rowIndex])
         {
             return placedCardsObjects[columnIndex, rowIndex].GetComponent<CardContainer>();
         }

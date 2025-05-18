@@ -17,7 +17,7 @@ public class Card
 
 
 
-    public void SetValues(int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType,Sprite _sprite)
+    public void SetValues(int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType, Sprite _sprite)
     {
         id = _id;
         cardName = _cardName;
@@ -30,6 +30,7 @@ public class Card
         points = basePoints;
         cardType = _cardType;
         sprite = _sprite;
+
     }
 
     public void SetValues((int _id, string _cardName, string _cardDescription, int _effectId, int _basePoints, CardType _cardType, Sprite _sprite) _cardValue)

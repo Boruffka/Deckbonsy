@@ -29,7 +29,7 @@ public class HandManager : MonoBehaviour
         CanvasGroup cg = descriptionBox.GetComponent<CanvasGroup>();
         if (cg == null) cg = descriptionBox.AddComponent<CanvasGroup>();
 
-        cg.blocksRaycasts = false;   
+        cg.blocksRaycasts = false;
         cg.interactable = false;
     }
 
@@ -76,6 +76,7 @@ public class HandManager : MonoBehaviour
     {
         return _isPlayerHand ? playerHand.GetHandSize() : enemyHand.GetHandSize();
     }
+
     public Card GetCardByIndex(int index)
     {
         return GameManager.gameManager.GetPlayerTurn() ? playerHand.GetCardByIndex(index) : enemyHand.GetCardByIndex(index);
@@ -94,18 +95,8 @@ public class HandManager : MonoBehaviour
 
     public void AddCardToHand(Card addedCard)
     {
-        if (GameManager.gameManager.GetPlayerTurn()) 
-            playerHand.AddCardToHand(addedCard);
-        else 
-            enemyHand.AddCardToHand(addedCard);
-    }
-
-    public void AddCardToHand(Card addedCard, bool _isPlayerHand)
-    {
-        if (_isPlayerHand) 
-            playerHand.AddCardToHand(addedCard);
-        else 
-            enemyHand.AddCardToHand(addedCard);
+        if (GameManager.gameManager.GetPlayerTurn()) playerHand.AddCardToHand(addedCard);
+        else enemyHand.AddCardToHand(addedCard);
     }
     public void AddCardToHand(Card addedCard, bool _isPlayerHand)
     {

@@ -102,12 +102,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-       
+
         //currentRound = 0;
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
 
-        scoreToWin = 500;
+        scoreToWin = 5;
         isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
     {
         currentRound = round;
         // Resetuj planszę, dobierz karty itd.
-        playerBoard.ClearBoard(); 
+        playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
 
         HandManager.handManager.ClearHands();
@@ -154,24 +154,24 @@ public class GameManager : MonoBehaviour
 
     private void ShowIntroDialogueForRound()
     {
-       
-    
-            if (currentRound == 0)
-            {
-                Debug.Log("⛔ Pomijam intro rundy 0 – obsługuje je IntroStarter.");
-                return;
-            }
-
-            Debug.Log("Próba odpalenia intro dla rundy: " + currentRound);
-
-            if (introShownThisRound)
-            {
-                Debug.Log("Intro już pokazane.");
-                return;
-            }
 
 
-            var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
+        if (currentRound == 0)
+        {
+            Debug.Log("⛔ Pomijam intro rundy 0 – obsługuje je IntroStarter.");
+            return;
+        }
+
+        Debug.Log("Próba odpalenia intro dla rundy: " + currentRound);
+
+        if (introShownThisRound)
+        {
+            Debug.Log("Intro już pokazane.");
+            return;
+        }
+
+
+        var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
 
         if (intro != null)
         {
@@ -294,6 +294,7 @@ public class GameManager : MonoBehaviour
         DeckManager.deckManager.ResetDeck();
         DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
+        DeckManager.deckManager.UpdateDrawButtons(true);
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
 
@@ -445,12 +446,11 @@ public class GameManager : MonoBehaviour
         return effectId == 5 || effectId == 8;
     }
 
-    public bool GetPlayerTurn() => isPlayerTurn;
-
-    public Card GetCardAtPosition(int columnIndex, int rowIndex, bool isPlayerBoard)
+    public bool GetPlayerTurn()
     {
-        return isPlayerBoard ? playerBoard.GetCardAtPosition(columnIndex, rowIndex) : enemyBoard.GetCardAtPosition(columnIndex, rowIndex);
+        return isPlayerTurn;
     }
+
     public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
     {
         return isPlayerBoard ? playerBoard.CountTypeOnBoard(type) : enemyBoard.CountTypeOnBoard(type);
@@ -493,30 +493,18 @@ public class GameManager : MonoBehaviour
             playerBoard.RemoveCardsFromColumn(columnIndex, cardPoints);
     }
 
-    public void RemoveCardAtPosition(int columnIndex, int rowIndex, bool bypassProtection, bool _isPlayerBoard)
-    {
-        if(_isPlayerBoard)
-        {
-            enemyBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
-        }
-        else
-        {
-            playerBoard.RemoveCardAtPosition(columnIndex, rowIndex, bypassProtection);
-        }
-    }
-
     private void RestartGame()
     {
         endGamePanel.SetActive(false);
         introShownThisRound = false;
         journalOpenedThisDialogue = false;
 
-        PrepareCurrentRound(); 
+        PrepareCurrentRound();
     }
 
     private void PrepareCurrentRound()
     {
-        playerBoard.ClearBoard(); 
+        playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
 
         HandManager.handManager.ClearHands();
