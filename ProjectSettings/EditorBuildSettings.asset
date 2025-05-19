@@ -9,8 +9,17 @@ EditorBuildSettings:
     path: Assets/DeckBonsy/Scenes/Deckbones.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/DeckBonsy/Scenes/MainMenuScene.unity
+    guid: 836a43a26cff1ab4d82e40112919d042
+  - enabled: 1
+    path: Assets/DeckBonsy/Scenes/CinematicScene.unity
+    guid: 86eb9d2460d8fc4449ecb7940bb1cbfa
+  - enabled: 1
     path: Assets/DeckBonsy/Scenes/MainScene.unity
     guid: dd03ac5f274856d41bd3fe9c174272ae
+  - enabled: 1
+    path: Assets/DeckBonsy/Scenes/EndScene.unity
+    guid: dac491fe9dbdfa3468bb9f3b71df2afc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

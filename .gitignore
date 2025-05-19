@@ -70,4 +70,5 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-Assets/DeckBonsy/Scripts/TextFile1.txt
+Assets/DeckBonsy/Scripts/test.txt
+Assets/DeckBonsy/Video/baza_2.mp4

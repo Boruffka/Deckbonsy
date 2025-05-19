@@ -77,7 +77,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         return columnIndex;
     }
-
+  
     public void SetRowIndex(int _rowIndex)
     {
         rowIndex = _rowIndex;
@@ -154,7 +154,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void SelectCard()
     {
-        DeselectAllCards();
+        DeselectAllCards(); 
 
         isSelected = true;
         selectedCard = this;
@@ -181,7 +181,7 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public static void DeselectAllCards()
     {
-        foreach (var card in FindObjectsOfType<CardContainer>())
+        foreach (var card in FindObjectsByType<CardContainer>(FindObjectsSortMode.None))
         {
             card.DeselectCard();
         }

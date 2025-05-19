@@ -8,7 +8,6 @@ public class FlyingCardEffect : MonoBehaviour
 
     public void Launch(Sprite sprite, Vector3 startPos, Vector3 endPos, float duration = 0.6f)
     {
-        Debug.Log("Launch!");
         cardImage.sprite = sprite;
         transform.position = startPos;
         StartCoroutine(FlyToTarget(endPos, duration));

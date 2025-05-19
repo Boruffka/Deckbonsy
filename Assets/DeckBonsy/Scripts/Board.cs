@@ -93,14 +93,28 @@ public class Board : MonoBehaviour
                 newCardRect.localRotation = Quaternion.identity;
                 newCardRect.localScale = Vector3.one;
 
+                
                 placedCardsObjects[columnIndex, i] = newCard;
 
-                CardContainer cardContainer = newCard.GetComponent<CardContainer>();
-                cardContainer.SetInPlay(true);
-                cardContainer.SetCardInfo(addedCard.GetComponent<CardContainer>().GetCardInfo());
-                cardContainer.SetColumnIndex(columnIndex);
-                cardContainer.SetRowIndex(i);
-                placedCards[columnIndex, i] = cardContainer.GetCardInfo();
+                CardContainer addedContainer = addedCard.GetComponent<CardContainer>();
+                CardContainer newContainer = newCard.GetComponent<CardContainer>();
+
+                newContainer.SetCardInfo(addedContainer.GetCardInfo());
+                newContainer.SetColumnIndex(columnIndex);
+                newContainer.SetRowIndex(i);
+                newContainer.SetInPlay(true); // blokuje klikanie
+
+                foreach (var graphic in newCard.GetComponentsInChildren<Graphic>())
+                {
+                    graphic.raycastTarget = false;
+                }
+                if (newCard.TryGetComponent<Button>(out var btn))
+                {
+                    btn.interactable = false;
+                }
+
+                placedCards[columnIndex, i] = newContainer.GetCardInfo();
+
 
                 UpdateBoard();
                 return;
@@ -109,6 +123,7 @@ public class Board : MonoBehaviour
 
         Debug.Log("Column full!");
     }
+
 
 
 
@@ -323,15 +338,30 @@ public class Board : MonoBehaviour
             columnSpot.SetColumnIndex(i);
             columnSpot.SetIsPlayerBoard(playerBoard);
 
-            // Utwórz obiekt Card Spots jako dziecko kolumny
             GameObject cardSpotsContainer = new GameObject("Card Spots", typeof(RectTransform));
             cardSpotsContainer.transform.SetParent(columnObj.transform, false);
 
             RectTransform cardSpotsRect = cardSpotsContainer.GetComponent<RectTransform>();
+
+            cardSpotsRect.anchorMin = new Vector2(0.5f, 0.5f);
+            cardSpotsRect.anchorMax = new Vector2(0.5f, 0.5f);
+            cardSpotsRect.pivot = new Vector2(0.5f, 0.5f);
+            cardSpotsRect.anchoredPosition = new Vector2(0f, -90f); //no ja pierdole
+            cardSpotsRect.sizeDelta = new Vector2(180, 450); 
+
             GridLayoutGroup layout = cardSpotsContainer.AddComponent<GridLayoutGroup>();
-            layout.cellSize = new Vector2(180, 180); // lub to co chcesz
+            layout.cellSize = new Vector2(140, 140);
+            layout.spacing = new Vector2(0, 15);
             layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             layout.constraintCount = 1;
+            layout.startAxis = GridLayoutGroup.Axis.Vertical;
+            layout.startCorner = GridLayoutGroup.Corner.LowerLeft;
+            layout.childAlignment = TextAnchor.LowerCenter;
+
+            layout.startAxis = GridLayoutGroup.Axis.Vertical;
+            layout.startCorner = GridLayoutGroup.Corner.LowerLeft;
+            layout.childAlignment = TextAnchor.LowerCenter;
+
 
             for (int j = 0; j < size; j++)
             {

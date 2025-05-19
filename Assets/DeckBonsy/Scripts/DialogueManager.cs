@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 
 public class DialogueManager : MonoBehaviour
@@ -75,6 +76,10 @@ public class DialogueManager : MonoBehaviour
                 color.a = blinkDark ? 1f : 0.5f;
                 indicatorImage.color = color;
                 blinkDark = !blinkDark;
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                OnContinueClicked(); 
             }
         }
     }
@@ -263,7 +268,7 @@ public class DialogueManager : MonoBehaviour
                 button.GetComponentInChildren<TextMeshProUGUI>().text = currentDialogue.playerChoices[i];
 
                 var image = button.GetComponent<Image>();
-                image.sprite = buttonImageNormal;
+               // image.sprite = buttonImageNormal;
 
                 int index = i;
                 button.onClick.RemoveAllListeners();
@@ -278,8 +283,8 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
-        fallbackCoroutine = StartCoroutine(FallbackAutoEndDialogue());
+        //if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
+        //fallbackCoroutine = StartCoroutine(FallbackAutoEndDialogue());
 
     }
 
@@ -326,6 +331,7 @@ public class DialogueManager : MonoBehaviour
         if (fallbackCoroutine != null) StopCoroutine(fallbackCoroutine);
 
         SetLastPlayerChoice(choiceIndex);
+        GameManager.gameManager.RegisterPlayerChoice(choiceIndex, currentDialogue);
         HideChoiceButtons(); 
 
         string playerResponse = currentDialogue.playerExpandedResponses[choiceIndex];
@@ -384,7 +390,7 @@ public class DialogueManager : MonoBehaviour
 
 
 
-    private IEnumerator FallbackAutoEndDialogue()
+    /*private IEnumerator FallbackAutoEndDialogue()
     {
         yield return new WaitForSeconds(10f);
         if (!hasChosen)
@@ -393,6 +399,7 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
         }
     }
+    */
     public DialogueData GetDialogueForRound(int round)
     {
         currentRound = round;
@@ -448,8 +455,8 @@ public class DialogueManager : MonoBehaviour
                     "Tak! Na bogów, wiem dokładnie co robić! Audiencja. To jest to. Na szczęście masz do czynienia z byłym cenionym strażnikiem. Myślę, że uda mi się taką zorganizować. Zobaczysz, cywile też będą po naszej stronie. Przekonamy ich, no oczywiście nie wszystkich, ale to zawsze coś. "
                 },
                     endings = new[] { 0, 1 },
-                    npcImage = npcImageRound1,
-                    backgroundImage = backgroundImageRound1
+                    npcImage = npcImageRound2,
+                    backgroundImage = backgroundImageRound2
                 };
                 
             case 3: //minerva
@@ -466,8 +473,8 @@ public class DialogueManager : MonoBehaviour
                     "Hm… nieczyste zagranie.(uśmiecha się pod nosem) Ale cóż innego mi pozostało… Przynajmniej będę mogła zająć się w końcu problemami swoich ludzi. Zatem… powodzenia. Może jeśli wygracie bogowie jakimś cudem oczyszczą twoje sumienie. "
                 },
                     endings = new[] { 0, 1 },
-                    npcImage = npcImageRound1,
-                    backgroundImage = backgroundImageRound1
+                    npcImage = npcImageRound3,
+                    backgroundImage = backgroundImageRound3
                 };
 
 
@@ -478,6 +485,10 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
-        OnDialogueEnd?.Invoke();
+       
+        {
+            OnDialogueEnd?.Invoke();
+        }
+
     }
 }

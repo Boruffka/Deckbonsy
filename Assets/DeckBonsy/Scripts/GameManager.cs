@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -57,6 +60,8 @@ public class GameManager : MonoBehaviour
     private bool introShownThisRound = false;
     private bool startCardGameAfterIntro = false;
 
+    public List<int> playerChoices = new List<int>();
+
     private void Awake()
     {
         for (int i = 0; i < 20; i++)
@@ -102,12 +107,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-
+       
         //currentRound = 0;
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
 
-        scoreToWin = 5;
+        scoreToWin = 3;
         isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
@@ -137,7 +142,7 @@ public class GameManager : MonoBehaviour
     {
         currentRound = round;
         // Resetuj planszę, dobierz karty itd.
-        playerBoard.ClearBoard();
+        playerBoard.ClearBoard(); 
         enemyBoard.ClearBoard();
 
         HandManager.handManager.ClearHands();
@@ -154,24 +159,24 @@ public class GameManager : MonoBehaviour
 
     private void ShowIntroDialogueForRound()
     {
+       
+    
+            if (currentRound == 0)
+            {
+                Debug.Log("⛔ Pomijam intro rundy 0 – obsługuje je IntroStarter.");
+                return;
+            }
+
+            Debug.Log("Próba odpalenia intro dla rundy: " + currentRound);
+
+            if (introShownThisRound)
+            {
+                Debug.Log("Intro już pokazane.");
+                return;
+            }
 
 
-        if (currentRound == 0)
-        {
-            Debug.Log("⛔ Pomijam intro rundy 0 – obsługuje je IntroStarter.");
-            return;
-        }
-
-        Debug.Log("Próba odpalenia intro dla rundy: " + currentRound);
-
-        if (introShownThisRound)
-        {
-            Debug.Log("Intro już pokazane.");
-            return;
-        }
-
-
-        var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
+            var intro = dialogueManager.GetIntroDialogueForRound(currentRound);
 
         if (intro != null)
         {
@@ -228,6 +233,16 @@ public class GameManager : MonoBehaviour
         if (!isCardBeingPlayed && chosenCard && chosenColumn)
         {
             isCardBeingPlayed = true;
+
+            int handSize = HandManager.handManager.GetHandSize(isPlayerTurn);
+            if (chosenCardIndex >= handSize)
+            {
+                Debug.LogWarning($"Nieprawidłowy index karty: {chosenCardIndex}. Przerywam dodawanie.");
+                ResetChoices();
+                isCardBeingPlayed = false;
+                return;
+            }
+
             GameObject cardObj = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex);
             if (cardObj == null)
             {
@@ -239,10 +254,9 @@ public class GameManager : MonoBehaviour
 
             cardContainerBeingPlayed = cardObj.GetComponent<CardContainer>();
 
-
             if (isPlayerTurn && playerBoard.CheckForEmptyInColumn(chosenColumnIndex))
             {
-                playerBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                playerBoard.AddCardToColumn(cardObj, chosenColumnIndex);
                 HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
                 ResetChoices();
                 UpdateScore();
@@ -250,7 +264,7 @@ public class GameManager : MonoBehaviour
             }
             else if (!isPlayerTurn && enemyBoard.CheckForEmptyInColumn(chosenColumnIndex))
             {
-                enemyBoard.AddCardToColumn(HandManager.handManager.GetCardObjectByIndex(chosenCardIndex), chosenColumnIndex);
+                enemyBoard.AddCardToColumn(cardObj, chosenColumnIndex);
                 HandManager.handManager.RemoveCardFromHand(chosenCardIndex);
                 ResetChoices();
                 UpdateScore();
@@ -260,6 +274,7 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log("Column full! Pick again.");
                 ResetChoices();
+                isCardBeingPlayed = false;
             }
         }
 
@@ -289,12 +304,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void PrepareNextRound()
     {
         DeckManager.deckManager.ResetDeck();
         DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
-        DeckManager.deckManager.UpdateDrawButtons(true);
         playerBoard.ClearBoard();
         enemyBoard.ClearBoard();
 
@@ -357,16 +372,36 @@ public class GameManager : MonoBehaviour
             journalUpdateManager.ShowNoteAfterDialogue(npcIndex, playerChoice, () =>
             {
                 journalOpenedThisDialogue = false;
-                currentRound++;
-                PrepareNextRound();
+
+                if (currentRound == 3)
+                {
+                    string result = CalculateEnding();
+                    PlayerPrefs.SetString("ending", result);
+                    SceneManager.LoadScene("EndingScene");
+                }
+                else
+                {
+                    currentRound++;
+                    PrepareNextRound();
+                }
             });
         }
         else
         {
-            currentRound++;
-            PrepareNextRound();
+            if (currentRound == 3)
+            {
+                string result = CalculateEnding();
+                PlayerPrefs.SetString("ending", result);
+                SceneManager.LoadScene("EndingScene");
+            }
+            else
+            {
+                currentRound++;
+                PrepareNextRound();
+            }
         }
     }
+
 
     private void CheckForRoundEnd()
     {
@@ -405,7 +440,7 @@ public class GameManager : MonoBehaviour
         UpdateBackground();
         DeckManager.deckManager.UpdateDrawButtons(isPlayerTurn);
         UpdateScore();
-        foreach (var card in FindObjectsOfType<CardContainer>())
+        foreach (var card in FindObjectsByType<CardContainer>(FindObjectsSortMode.None))
         {
             card.UpdateInteractivityVisual();
         }
@@ -446,10 +481,7 @@ public class GameManager : MonoBehaviour
         return effectId == 5 || effectId == 8;
     }
 
-    public bool GetPlayerTurn()
-    {
-        return isPlayerTurn;
-    }
+    public bool GetPlayerTurn() => isPlayerTurn;
 
     public int CountTypeOfCardOnBoard(CardType type, bool isPlayerBoard)
     {
@@ -463,12 +495,19 @@ public class GameManager : MonoBehaviour
 
     public void SetChosenCardIndex(int _chosenCardIndex, bool _isPlayerCard)
     {
-        if (isPlayerTurn == _isPlayerCard)
+        if (isPlayerTurn != _isPlayerCard) return;
+
+        int handSize = HandManager.handManager.GetHandSize(isPlayerTurn);
+        if (_chosenCardIndex >= handSize)
         {
-            chosenCard = true;
-            chosenCardIndex = _chosenCardIndex;
+            Debug.LogWarning($"Próba ustawienia nieprawidłowego indeksu: {_chosenCardIndex}, rozmiar ręki: {handSize}");
+            return;
         }
+
+        chosenCard = true;
+        chosenCardIndex = _chosenCardIndex;
     }
+
 
     public void SetChosenCardInPlayObject(CardContainer _chosenCardContainerInPlayObject)
     {
@@ -499,12 +538,12 @@ public class GameManager : MonoBehaviour
         introShownThisRound = false;
         journalOpenedThisDialogue = false;
 
-        PrepareCurrentRound();
+        PrepareCurrentRound(); 
     }
 
     private void PrepareCurrentRound()
     {
-        playerBoard.ClearBoard();
+        playerBoard.ClearBoard(); 
         enemyBoard.ClearBoard();
 
         HandManager.handManager.ClearHands();
@@ -518,7 +557,6 @@ public class GameManager : MonoBehaviour
 
         UpdateScore();
 
-        // ⬇️ UWAGA: NIE pokazuj dialogu ponownie po porażce!
         startCardGameAfterIntro = true;
     }
 
@@ -563,5 +601,31 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
         Debug.Log("Dziennik wyczyszczony przy starcie gry.");
     }
+    public int GetCurrentRound()
+    {
+        return currentRound;
+    }
+
+    public void RegisterPlayerChoice(int choiceIndex, DialogueData dialogue)
+    {
+        if (dialogue.endings != null && dialogue.endings.Length > choiceIndex)
+        {
+            int outcome = dialogue.endings[choiceIndex]; // 0 = zły, 1 = dobry
+            playerChoices.Add(outcome);
+        }
+    }
+    public string CalculateEnding()
+    {
+        int good = playerChoices.FindAll(c => c == 1).Count;
+
+        if (good >= 3) return "good";
+        if (good == 2) return "neutral";
+        return "bad";
+    }
+    public bool IsPostGameDialogue()
+    {
+        return !gameReady && introShownThisRound; // czyli po walce, nie przed
+    }
+
 
 }

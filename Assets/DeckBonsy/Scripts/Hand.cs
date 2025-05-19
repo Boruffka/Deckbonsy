@@ -1,4 +1,4 @@
-ï»¿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
@@ -19,7 +19,7 @@ public class Hand : MonoBehaviour
         if (index >= 0 && index < cardObjects.Count && cardObjects[index] != null)
             return cardObjects[index];
 
-        Debug.LogWarning($"[Hand] Nieprawidï¿½owy index karty: {index}, rozmiar rï¿½ki: {cardObjects.Count}");
+        Debug.LogWarning($"[Hand] Nieprawid³owy index karty: {index}, rozmiar rêki: {cardObjects.Count}");
         return null;
     }
 
@@ -28,7 +28,7 @@ public class Hand : MonoBehaviour
     {
         if (cardObjects.Count >= maxHandSize)
         {
-            Debug.LogWarning("Nie udaï¿½o siï¿½ dodaï¿½ karty ï¿½ rï¿½ka peï¿½na.");
+            Debug.LogWarning("Nie uda³o siê dodaæ karty – rêka pe³na.");
             return;
         }
 
@@ -41,8 +41,11 @@ public class Hand : MonoBehaviour
         container.SetHandIndex(cardObjects.Count - 1);
         container.UpdateCardVisuals();
 
+        currentHandSize++;
+
         RearrangeHand();
     }
+
 
 
     public void RemoveCardFromHand(int index)
@@ -73,7 +76,7 @@ public class Hand : MonoBehaviour
         float center = (count - 1) / 2f;
         float angleStep = 10f;
 
-        Vector3 handCenter = transform.GetChild(0).position + new Vector3(100f, 0, 0);
+       Vector3 handCenter = transform.GetChild(0).position + new Vector3(100f, 0, 0);
 
 
         for (int i = 0; i < count; i++)
@@ -100,7 +103,7 @@ public class Hand : MonoBehaviour
         string s = "";
         foreach (var obj in cardObjects)
             s += obj != null ? "1 " : "0 ";
-        Debug.Log("Zawartoï¿½ï¿½ rï¿½ki: " + s);
+        Debug.Log("Zawartoœæ rêki: " + s);
     }
 
     public RectTransform GetNextFreeSlot(out int index)

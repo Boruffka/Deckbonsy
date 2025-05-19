@@ -29,7 +29,7 @@ public class HandManager : MonoBehaviour
         CanvasGroup cg = descriptionBox.GetComponent<CanvasGroup>();
         if (cg == null) cg = descriptionBox.AddComponent<CanvasGroup>();
 
-        cg.blocksRaycasts = false;
+        cg.blocksRaycasts = false;   
         cg.interactable = false;
     }
 

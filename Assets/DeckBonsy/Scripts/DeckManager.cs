@@ -46,10 +46,15 @@ public class DeckManager : MonoBehaviour
 
     private void Start()
     {
+        MockDeck();
+        ResetDeck();
+        ShuffleDeck();
+        ListDeck();
 
         playerDrawImage = playerDrawButton.GetComponent<Image>();
         enemyDrawImage = enemyDrawButton.GetComponent<Image>();
 
+        UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
     }
 
 
@@ -78,7 +83,7 @@ public class DeckManager : MonoBehaviour
         (17, "Citizen","MIESZCZANIN\nJednostka bazowa o wartości 1.", 0, 1, CardType.Citizen,cardSprite[17]),
         (18, "Infiltrator","INFILTRATOR\nKarta specjalna o wartości 2.\nBadanie terenu: Zdradza tożsamość pierwszej karty z wierzchu stosu przeciwnika.",7, 2,CardType.Citizen,cardSprite[18]),
         (19, "Złodziej", "ZŁODZIEJ\nKarta specjalna o wartości 0.\nKradzież tożsamości: Umieszcza dowolną kartę przeciwnika z planszy na ręce gracza i zajmuje jej miejsce.",8,0,CardType.Citizen,cardSprite[19])
-
+        
         };
 
         for (int i = 0; i < startingDeckSize; i++)
