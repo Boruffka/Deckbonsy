@@ -77,16 +77,16 @@ public class EffectManager : MonoBehaviour
         {
             Card cardInfo = playedCard.GetCardInfo();
 
-            if (!cardInfo.effectFired)
-            {
-                cardInfo.SetEffectFired(true);
+            //if (!cardInfo.effectFired)
+            //{
+            //    cardInfo.SetEffectFired(true);
 
-                Card mockCitizen = new Card();
-                mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o wartoœci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
+            //    Card mockCitizen = new Card();
+            //    mockCitizen.SetValues(15, "Citizen", "MIESZCZANIN\nJednostka bazowa o wartoœci 1.", 0, 1, CardType.Citizen, DeckManager.deckManager.GetCardSprite(15));
 
-                Debug.Log("Helion's Citizen card added!");
-                HandManager.handManager.AddCardToHand(mockCitizen, playedCard.GetIsPlayerCard());
-            }
+            //    Debug.Log("Helion's Citizen card added!");
+            //    HandManager.handManager.AddCardToHand(mockCitizen, playedCard.GetIsPlayerCard());
+            //}
 
             int inc = GameManager.gameManager.CountTypeOfCardInColumn(CardType.Citizen, playedCard.GetIsPlayerCard(), playedCard.GetColumnIndex());
 

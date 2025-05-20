@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
         endGamePanel.SetActive(false);
         restartButton.onClick.AddListener(RestartGame);
 
-        scoreToWin = 3;
+        scoreToWin = 30;
         isCardBeingPlayed = false;
         chosenCard = false;
         chosenColumn = false;
@@ -135,6 +135,8 @@ public class GameManager : MonoBehaviour
         }
 
 
+        DeckManager.deckManager.UpdateDrawButtons(true);
+        UpdateDrawTexts(true);
         // ShowIntroDialogueForRound();
     }
 
@@ -235,13 +237,6 @@ public class GameManager : MonoBehaviour
             isCardBeingPlayed = true;
 
             int handSize = HandManager.handManager.GetHandSize(isPlayerTurn);
-            if (chosenCardIndex >= handSize)
-            {
-                Debug.LogWarning($"Nieprawidłowy index karty: {chosenCardIndex}. Przerywam dodawanie.");
-                ResetChoices();
-                isCardBeingPlayed = false;
-                return;
-            }
 
             GameObject cardObj = HandManager.handManager.GetCardObjectByIndex(chosenCardIndex);
             if (cardObj == null)
@@ -307,6 +302,8 @@ public class GameManager : MonoBehaviour
 
     private void PrepareNextRound()
     {
+        DeckManager.deckManager.UpdateDrawButtons(true);
+        UpdateDrawTexts(true);
         DeckManager.deckManager.ResetDeck();
         DeckManager.deckManager.ShuffleDeck();
         HandManager.handManager.ClearHand();
@@ -448,12 +445,12 @@ public class GameManager : MonoBehaviour
 
     public void UpdateScore()
     {
-        Debug.Log(" UpdateScore called!");
+        //Debug.Log(" UpdateScore called!");
 
         int playerScore = playerBoard.CountScore();
         int enemyScore = enemyBoard.CountScore();
 
-        Debug.Log($"Player score: {playerScore}, Enemy score: {enemyScore}");
+        //Debug.Log($"Player score: {playerScore}, Enemy score: {enemyScore}");
 
         playerScoreCounter.text = $"Your score:\n{playerScore}";
         enemyScoreCounter.text = $"Enemy score:\n{enemyScore}";
@@ -464,6 +461,12 @@ public class GameManager : MonoBehaviour
         playerDrawText.SetActive(isPlayerTurn);
         enemyDrawText.SetActive(!isPlayerTurn);
     }
+    private void UpdateDrawTexts(bool _isPlayerTurn)
+    {
+        playerDrawText.SetActive(_isPlayerTurn);
+        enemyDrawText.SetActive(!_isPlayerTurn);
+    }
+
 
     private void UpdateBackground()
     {
@@ -478,7 +481,7 @@ public class GameManager : MonoBehaviour
 
     private bool DoesEffectIdRequireInput(int effectId)
     {
-        return effectId == 5 || effectId == 8;
+        return false; // effectId == 5 || effectId == 8;
     }
 
     public bool GetPlayerTurn() => isPlayerTurn;
@@ -495,19 +498,15 @@ public class GameManager : MonoBehaviour
 
     public void SetChosenCardIndex(int _chosenCardIndex, bool _isPlayerCard)
     {
+        Debug.Log(_chosenCardIndex + " " + _isPlayerCard);
+
         if (isPlayerTurn != _isPlayerCard) return;
 
         int handSize = HandManager.handManager.GetHandSize(isPlayerTurn);
-        if (_chosenCardIndex >= handSize)
-        {
-            Debug.LogWarning($"Próba ustawienia nieprawidłowego indeksu: {_chosenCardIndex}, rozmiar ręki: {handSize}");
-            return;
-        }
 
         chosenCard = true;
         chosenCardIndex = _chosenCardIndex;
     }
-
 
     public void SetChosenCardInPlayObject(CardContainer _chosenCardContainerInPlayObject)
     {
@@ -537,12 +536,14 @@ public class GameManager : MonoBehaviour
         endGamePanel.SetActive(false);
         introShownThisRound = false;
         journalOpenedThisDialogue = false;
-
+        
         PrepareCurrentRound(); 
     }
 
     private void PrepareCurrentRound()
     {
+        DeckManager.deckManager.UpdateDrawButtons(true);
+        UpdateDrawTexts(true);
         playerBoard.ClearBoard(); 
         enemyBoard.ClearBoard();
 

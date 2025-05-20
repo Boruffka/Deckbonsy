@@ -14,15 +14,16 @@ public class Hand : MonoBehaviour
     public int GetMaxHandSize() => maxHandSize;
     public int GetHandSize() => currentHandSize;
 
+
     public GameObject GetCardObjectByIndex(int index)
     {
+        Debug.Log($"GetCardObjectByIndex({index})");
         if (index >= 0 && index < cardObjects.Count && cardObjects[index] != null)
             return cardObjects[index];
 
         Debug.LogWarning($"[Hand] Nieprawid³owy index karty: {index}, rozmiar rêki: {cardObjects.Count}");
         return null;
     }
-
 
     public void AddCardToHand(Card addedCard)
     {
@@ -44,9 +45,8 @@ public class Hand : MonoBehaviour
         currentHandSize++;
 
         RearrangeHand();
+        ListHand();
     }
-
-
 
     public void RemoveCardFromHand(int index)
     {
@@ -55,6 +55,11 @@ public class Hand : MonoBehaviour
         Destroy(cardObjects[index]);
         cardObjects[index] = null;
         cardObjects.RemoveAt(index);
+        int i = 0;
+        foreach(GameObject cardObject in cardObjects)
+        {
+            cardObject.GetComponent<CardContainer>().SetHandIndex(i++);
+        }
         currentHandSize--;
         RearrangeHand();
     }
@@ -102,7 +107,7 @@ public class Hand : MonoBehaviour
     {
         string s = "";
         foreach (var obj in cardObjects)
-            s += obj != null ? "1 " : "0 ";
+            s += obj.GetComponent<CardContainer>().GetHandIndex();
         Debug.Log("Zawartoœæ rêki: " + s);
     }
 

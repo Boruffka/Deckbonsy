@@ -68,6 +68,11 @@ public class CardContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         handIndex = _handIndex;
     }
 
+    public int GetHandIndex()
+    {
+        return handIndex;
+    }
+
     public void SetColumnIndex(int _columnIndex)
     {
         columnIndex = _columnIndex;

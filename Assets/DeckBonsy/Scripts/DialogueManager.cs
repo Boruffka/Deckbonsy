@@ -91,7 +91,7 @@ public class DialogueManager : MonoBehaviour
             case 0: //triceps (nie dziala, przeniesc do sceny po tutorialu)
                 return new DialogueData
                 {
-                    npcLine = "No już, siadaj do stołu, przekonajmy się na kogo wychował Cię największy twardziel jakiego było mi dane poznać. Prawdziwą wojowniczkę można poznać tylko na polu bitwy. Może karty to nie to samo co dobra bitka wręcz, ale lepsze to niż gadanie o sandałach imperatora.",
+                    npcLine = "a",
                     playerChoices = new string[0],
                     endings = new int[0],
                     npcImage = npcImageRound0,

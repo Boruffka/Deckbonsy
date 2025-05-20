@@ -49,12 +49,11 @@ public class DeckManager : MonoBehaviour
         MockDeck();
         ResetDeck();
         ShuffleDeck();
-        ListDeck();
+        //ListDeck();
 
         playerDrawImage = playerDrawButton.GetComponent<Image>();
         enemyDrawImage = enemyDrawButton.GetComponent<Image>();
 
-        UpdateDrawButtons(GameManager.gameManager.GetPlayerTurn());
     }
 
 
